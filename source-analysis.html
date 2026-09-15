@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Analysis - for restructuring</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 2.5rem 2rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: #f1f5f9;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        main {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        .prompt-box-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        }
+
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f1f5f9;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .prompt-header h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            border: none;
+            padding: 1.5rem;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            background: #ffffff;
+            color: var(--text-main);
+            outline: none;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Source Analysis</h1>
+            <h2>for restructuring</h2>
+        </header>
+
+        <main>
+            <div class="prompt-box-container">
+                <div class="prompt-header">
+                    <h3>Prompt</h3>
+                    <button class="copy-btn" onclick="copyToClipboard('prompt-text', this)">Copy</button>
+                </div>
+<textarea id="prompt-text" class="prompt-textarea" rows="35" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+
+Read and review the uploaded document, and treat the information it contains as the initial, incomplete CORE message or content that I am developing.
+
+আমি বিস্তারিত ব্যাখ্যা চাই না, আপনার নিজের কোনও মন্তব্য বা পর্যবেক্ষণও চাই না। আমি চাই—আপনি আমার thinking partner হিসেবে কাজ করুন এবং আমার কনটেন্টের outline structure construct করতে আমাকে সাহায্য করুন।
+
+এই মুহূর্তে, এই  Rule and Principle-কে strictly follow করে আমার নীচের প্রশ্নগুলোর short and to-the-point উত্তর দিন।
+
+প্রশ্নাবলী—
+
+1, কোন কোন ধারণা বা কনসেপ্ট এবং টার্মিনোলজি  পাঠকের কাছে নতুন বা অজানা?
+2, এখানে কোর টপিক কটা? ও কি কি? সেই কেন্দ্রীয় Core Topic এর সঙ্গে যুক্ত প্রধান Core Topics কটা? ও কি কি? 
+3, আমি এই uploaded document-র informationকে expand করে 5000-6000 word-র একটা pro-level "Why-to → What → How-to Book" ধরণের ডকুমেন্ট লেখার পরিকল্পনা করছি। নীচের এই জিনিস গুলো আমার কাছে স্পষ্ট হচ্ছে না।
+
+তুমি don't work as an agent to do it for me, work as my thinking partner and guide me to chalk out the content structure. 
+
+1, proposed content-এ কেন্দ্রীয় কোর টপিক ও সেই কেন্দ্রীয় Core Topic এর সঙ্গে যুক্ত প্রধান Core Topics গুলো কোন hierarchy-তে প্রেজেন্ট করতে হবে?
+
+RULE (MANDATORY)
+পরিচয় করানোর pattern:
+নতুন ধারণার নাম → সংক্ষিপ্ত ব্যাখ্যা → তার ভূমিকা/কাজ → প্রয়োজনে উদাহরণ → তারপর practical exercise।
+আর যে ধারণা পুরো পরবর্তী কাঠামোর ভিত্তি, সেটিকে আলাদা Section দেওয়া হয়েছে; আর যে ধারণা কেবল পরের ধারণা বোঝার জন্য প্রয়োজন, সেটিকে চলতি আলোচনার মধ্যেই introduce করা হয়েছে।
+
+2, এই hierarchy-টা বিশ্লেষণ করো কোনটা কার উপরে নির্ভরশীল (in reference to ecosystem) এবং সেই জন্য কাকে proposed ডকুমেন্টে-এ আগে ও কাকে পরে আনতে হবে?
+
+3, proposed ডকুমেন্টে-এ কটা Chapter / Section রাখতে হবে? আমাকে চার কলামের এই টেবলটা তৈরি করে দাও -              
+Section-এর name
+Section-এর ধরন
+Section-এর Core Topic কি বা কি কি (কেন্দ্রীয় Core Topic ও এর সঙ্গে যুক্ত প্রধান Core Topics-র মধ্যে)?   
+Section-এ ব্যবহারের জন্য Content Template
+
+4, এই টেবিলের Section-গুলোকে dependency অনুযায়ী সাজিয়ে একটি বুলেট লিস্ট দাও  
+Section-এর name —কোন Section আগে প্রয়োজন, কোনটি তার ওপর নির্ভরশীল, এবং কেন।
+
+5: এই সেকসেন / চ্যাপ্টারের শিরোনামগুলো সম্পাদনা করে একটি চূড়ান্ত, প্রকাশযোগ্য, ও শক্তিশালী  শিরোনামের তালিকা দিন। বেছে নেওয়া এই শিরোনাম, উপশিরোনাম গুলোকে ব্যবহার করে চূড়ান্ত আউটলাইনটাকে নতুন করে এবার সম্পূর্ণভাবে লেখো ও এই চূড়ান্ত আউটলাইনের প্রতিটি অধ্যায়ের শেষে পরবর্তী অধ্যায়ে যাওয়ার জন্য একটি সংক্ষিপ্ত সেতুবাক্য লিখুন, যাতে পুরো বইয়ের প্রবাহ আরও স্বাভাবিক ও শক্তিশালী হয়।
+
+6: এই শিরোনাম, উপশিরোনাম, ও সেতুবাক্য গুলোকে ব্যবহার করে চূড়ান্ত আউটলাইনটাকে নতুন করে এবার সম্পূর্ণভাবে লেখো.</textarea>
+            </div>
+        </main>
+
+        <footer>
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+    </div>
+
+    <script>
+        // Copy to Clipboard Logic
+        function copyToClipboard(elementId, btnElement) {
+            const textarea = document.getElementById(elementId);
+            
+            // Select and copy
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+            
+            // Deselect
+            window.getSelection().removeAllRanges();
+            
+            // Visual feedback on button
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "Copied!";
+            btnElement.style.backgroundColor = "#10b981"; // Success green color
+            
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.style.backgroundColor = ""; // Reset to default CSS
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
