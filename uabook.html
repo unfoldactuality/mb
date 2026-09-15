@@ -1,0 +1,4307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UA Book — Strategy Framework</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,700;0,900;1,700;1,900&family=Newsreader:ital,wght@0,400;0,600;1,400&family=Manrope:wght@500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ffba38;
+            --primary-fixed: #ffdeac;
+            --on-primary: #432c00;
+            --surface: #16111f;
+            --surface-dim: #16111f;
+            --surface-container-lowest: #110b1a;
+            --surface-container-low: #1f1928;
+            --surface-container: #231d2c;
+            --surface-container-high: #2e2737;
+            --surface-container-highest: #393242;
+            --on-surface: #eadef4;
+            --on-surface-variant: #ccc4cf;
+            --outline: #958e99;
+            --outline-variant: #4a454e;
+            --tertiary: #b9ccb1;
+            --green: #00c853;
+            --font-headline: 'Noto Serif', serif;
+            --font-body: 'Newsreader', serif;
+            --font-label: 'Manrope', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-label);
+            color: var(--on-surface);
+            background: var(--surface);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* STARFIELD ANIMATION */
+        .stars, .stars-md {
+            position: absolute;
+            top: 0; left: 0;
+            border-radius: 50%;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .stars {
+            width: 1px; height: 1px;
+            box-shadow: 1425px 308px #fff, 187px 125px #fff, 913px 467px #fff, 1680px 82px #fff, 432px 391px #fff, 1102px 37px #fff, 761px 242px #fff;
+            animation: drift 150s linear infinite;
+        }
+
+        .stars-md {
+            width: 2px; height: 2px;
+            box-shadow: 1312px 178px #fff, 456px 445px #fff, 1789px 112px #fff, 623px 323px #fff;
+            animation: drift 100s linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-600px); }
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 80px 0 60px;
+            background: var(--surface-container-lowest);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header__title {
+            font-family: var(--font-headline);
+            font-size: clamp(1rem, 10vw, 2rem);
+            font-weight: 500;
+            font-style: bold;
+            color: var(--primary);
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        /* NAVIGATION */
+        .tools-nav {
+            background: var(--surface-container-high);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .tools-nav h3 {
+            font-family: var(--font-label);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 15px;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            background: var(--surface-container);
+            color: var(--on-surface);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 1px solid var(--outline-variant);
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            border-color: var(--primary);
+            background: var(--surface-container-highest);
+        }
+
+        /* INPUT SECTIONS */
+        .input-section {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--outline-variant);
+        }
+
+        .input-card {
+            background: var(--surface-container);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .input-label {
+            display: block;
+            font-family: var(--font-headline);
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .main-textarea {
+            width: 100%;
+            min-height: 150px;
+            background: var(--surface-container-lowest);
+            border: 1px solid var(--outline-variant);
+            border-radius: 12px;
+            color: var(--on-surface);
+            padding: 15px;
+            font-family: var(--font-label);
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        /* PROMPT CARDS */
+        .prompt-card {
+            background: var(--surface-container);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            scroll-margin-top: 30px;
+        }
+
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .prompt-number {
+            background: var(--primary);
+            color: var(--on-primary);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .prompt-title {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            min-height: 400px;
+            background: var(--surface-container-lowest);
+            border: 1px solid var(--outline-variant);
+            border-radius: 12px;
+            color: var(--on-surface);
+            padding: 20px;
+            font-family: var(--font-label);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+
+        .copy-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-fixed);
+            transform: scale(1.02);
+        }
+
+        .copy-button.copied {
+            background: var(--green);
+            color: #fff;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid var(--outline-variant);
+            color: var(--on-surface-variant);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header__title { font-size: 3rem; }
+            .prompt-card { padding: 20px; }
+            .prompt-textarea { min-height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <div class="stars-md"></div>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="header__title">UA Book</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- DYNAMIC INPUT FIELDS -->
+        <section class="input-section">
+            <div class="input-card">
+                <label class="input-label">Source Content (Context)</label>
+                <textarea class="main-textarea" placeholder="Paste your Source Content here for your reference..."></textarea>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <div class="input-card">
+                <label class="input-label">Author Content (Propositions)</label>
+                <textarea class="main-textarea" placeholder="Paste your Author Content here for your reference..."></textarea>
+            </div>
+        </section>
+
+        <!-- NAVIGATION -->
+        <nav class="tools-nav">
+            <h3>Jump to Prompt:</h3>
+            <div class="nav-links">
+                <a href="#p1">01</a><a href="#p2">02</a><a href="#p3">03</a><a href="#p4">04</a><a href="#p5">05</a><a href="#p6">06</a><a href="#p7">07</a><a href="#p8">08</a><a href="#p9">09</a><a href="#p10">10</a><a href="#p11">11</a><a href="#p12">12</a><a href="#p13">13</a>
+            </div>
+        </nav>
+
+        <!-- PROMPTS -->
+        
+        <!-- PROMPT 1 -->
+        <div class="prompt-card" id="p1">
+            <div class="prompt-header">
+                <div class="prompt-number">1</div>
+                <h2 class="prompt-title">Identify Concepts & Terminology</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+আমি দুটি ফাইল আপলোড করেছি:
+
+1. Source Content — বিষয়টি সম্পর্কে ব্যবহৃত মূল source material।
+2. Author Content — এই বইয়ে লেখক নিজে যে propositions, মতামত, ব্যাখ্যা, interpretation, claims, ideas, examples, analogies, conclusions এবং practical techniques প্রকাশ করতে চান।
+
+এই দুটি ফাইলকে আলাদা content source হিসেবে বিবেচনা করো। একটির content-কে অন্যটির content হিসেবে treat করবে না।
+
+এই পর্যায়ে কোনও outline, chapter structure বা content placement তৈরি করবে না।
+
+শুধু uploaded দুইটি ফাইলের content-এর ভিত্তিতে শনাক্ত করো:
+
+কোন কোন ধারণা, concept এবং terminology সম্ভাব্য পাঠকের কাছে নতুন বা অজানা হতে পারে?
+
+প্রয়োজনে প্রতিটির ক্ষেত্রে উল্লেখ করো এটি:
+- Source Content থেকে এসেছে
+- Author Content থেকে এসেছে
+- অথবা উভয় জায়গাতেই রয়েছে।
+
+শুধু সত্যিই relevant নতুন বা unfamiliar concept/terminology চিহ্নিত করবে। অপ্রয়োজনীয়ভাবে তালিকা বড় করবে না।</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 2 -->
+        <div class="prompt-card" id="p2">
+            <div class="prompt-header">
+                <div class="prompt-number">2</div>
+                <h2 class="prompt-title">Core Topics Identification</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Source Content এবং Author Content—দুটি ফাইলের সম্পূর্ণ content-এর ভিত্তিতে এই বইয়ের substantive Core Topics শনাক্ত করো।
+
+এই পর্যায়ে কোনও chapter, section বা final outline তৈরি করবে না।
+
+প্রথমে শনাক্ত করো:
+
+1. বইটির কেন্দ্রীয় Core Topic কী বা কী কী?
+
+2. কেন্দ্রীয় Core Topic-এর সঙ্গে সরাসরি যুক্ত প্রধান Core Topics কী কী?
+
+3. Author Content-এর এমন কোন Core Topic বা substantive idea আছে যা Source Content-এর topic structure-এ সরাসরি নেই, কিন্তু এই বইয়ের জন্য গুরুত্বপূর্ণ?
+
+4. Source Content-এর এমন কোন Core Topic আছে যা Author Content-এর intended direction-এর তুলনায় secondary বা supporting nature-এর?
+
+Core Topic শনাক্ত করার সময় শুধু বিষয়টির নাম দেখবে না। দেখবে:
+- বইটি আসলে কী নিয়ে কথা বলতে চায়
+- কোন ধারণাগুলো অন্য গুরুত্বপূর্ণ ধারণাকে support করে
+- কোন ধারণাগুলো নিজস্ব substantive discussion দাবি করে
+- Author Content-এর নিজস্ব propositions, মতামত, explanations এবং practical techniques-এর গুরুত্ব
+
+তবে এখনও কোনও hierarchy, dependency বা chapter structure তৈরি করবে না।</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 3 -->
+        <div class="prompt-card" id="p3">
+            <div class="prompt-header">
+                <div class="prompt-number">3</div>
+                <h2 class="prompt-title">Dependency & Structural Depth</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+আমি দুটি ফাইল আপলোড করেছি:
+
+1. Source Content — বিষয়টি সম্পর্কে ব্যবহৃত মূল source material।
+2. Author Content — এই বইয়ে লেখক নিজে যে propositions, মতামত, ব্যাখ্যা, interpretation, claims, ideas, examples, analogies, conclusions এবং practical techniques প্রকাশ করতে চান।
+
+এই দুটি content source-কে আলাদা হিসেবে বিবেচনা করবে এবং তাদের নিজস্ব ভূমিকা বজায় রাখবে।
+
+এই ধাপে এখনও final Chapter/Section outline তৈরি করবে না।
+
+এই ধাপের উদ্দেশ্য হলো—পরবর্তী structural planning-এর আগে Source Content এবং Author Content-এর মধ্যে থাকা conceptual relationship, dependency, logical progression এবং structural requirements শনাক্ত করা।
+
+মূল নীতি:
+
+> Structure is in service of the content, not content in service of the structure.
+
+অর্থাৎ, structure তৈরি করার সুবিধার জন্য substantive authorial content বাদ, dilute, replace বা unnecessarily reduce করা যাবে না।
+
+যদি কোনও content এবং সম্ভাব্য structure-এর মধ্যে conflict দেখা যায়, তাহলে প্রথমে বিবেচনা করবে structure কীভাবে পরিবর্তন করলে content-টি আরও ভালোভাবে serve করা যায়।
+
+---
+
+## 1. CONCEPTUAL DEPENDENCY
+
+প্রতিটি গুরুত্বপূর্ণ Core Topic / concept / idea-এর ক্ষেত্রে নির্ধারণ করো:
+
+- এটি বুঝতে পাঠকের আগে কোন concept বা idea জানা প্রয়োজন?
+- এটি কোন concept-এর ওপর নির্ভরশীল?
+- এটি পরবর্তী কোন concept, proposition বা discussion-এর ভিত্তি তৈরি করে?
+
+Dependency নির্ধারণ করার সময় শুধু বিষয়গত similarity দেখবে না।
+
+মূল প্রশ্ন হবে:
+
+> “A না বুঝলে B কি যথেষ্টভাবে বোঝা সম্ভব?”
+
+যদি না হয়, তাহলে A → B dependency বিবেচনা করবে।
+
+প্রয়োজনে dependency-গুলোকে এভাবে দেখাও:
+
+A → B → C
+
+এবং প্রতিটি গুরুত্বপূর্ণ dependency-এর কারণ সংক্ষেপে বলো।
+
+---
+
+## 2. LOGICAL / ARGUMENT DEPENDENCY
+
+শুধু concept-এর dependency নয়, Author Content-এর বক্তব্যগুলোর মধ্যেও logical dependency শনাক্ত করো।
+
+দেখো:
+
+- কোন proposition-এর আগে কোন premise বা explanation প্রয়োজন?
+- কোন claim আগে establish না করলে পরের claim দুর্বল বা অস্পষ্ট হয়ে যায়?
+- কোন explanation কোন proposition-কে support করছে?
+- কোন interpretation কোন ধারণার ওপর দাঁড়িয়ে আছে?
+- কোন practical technique-এর আগে কোন conceptual understanding প্রয়োজন?
+
+বিশেষভাবে Author Content-এর নিজস্ব reasoning, argument এবং intended meaning-কে গুরুত্ব দেবে।
+
+Author-এর argument-কে Source Content-এর structure-এর সঙ্গে জোর করে মিলিয়ে দেবে না।
+
+---
+
+# 3. STRUCTURAL DEPTH RULE — MANDATORY
+
+নতুন concept বা idea-কে কতটা structural space দেওয়া হবে, তা নির্ধারণ করার সময় এই rule strictly follow করবে:
+
+> **যে ধারণা পুরো পরবর্তী কাঠামোর ভিত্তি, সেটিকে আলাদা Section দেওয়া হবে; আর যে ধারণা কেবল পরের ধারণা বোঝার জন্য প্রয়োজন, সেটিকে চলতি আলোচনার মধ্যেই introduce করা হবে।**
+
+এই rule operationalize করার সময়:
+
+### A. Foundational Concept
+
+কোনও concept যদি:
+
+- পরবর্তী একাধিক গুরুত্বপূর্ণ concept-এর foundation হয়
+- একাধিক গুরুত্বপূর্ণ proposition বা discussion তার ওপর নির্ভর করে
+- তার নিজস্ব substantive explanation / distinction / argument থাকে
+- তাকে না বুঝলে পরবর্তী কাঠামোর একটি উল্লেখযোগ্য অংশ বোঝা কঠিন হয়
+
+তাহলে সেটিকে **আলাদা Section** দেওয়ার প্রয়োজন বিবেচনা করবে।
+
+প্রয়োজনে Chapter-level treatment-এর কথাও বিবেচনা করতে পারো, কিন্তু শুধু concept-টি গুরুত্বপূর্ণ মনে হচ্ছে বলে Chapter ঘোষণা করবে না।
+
+### B. Prerequisite Concept
+
+কোনও concept যদি:
+
+- মূলত একটি পরবর্তী concept বা discussion বোঝার জন্য প্রয়োজন হয়
+- নিজস্ব substantive discussion দাবি না করে
+- তার গুরুত্ব মূলত পরবর্তী ধারণাটিকে বোঝাতে সাহায্য করার মধ্যে সীমাবদ্ধ থাকে
+
+তাহলে সেটিকে আলাদা Section না দিয়ে **চলতি আলোচনার মধ্যেই appropriate context-এ introduce করার** সুপারিশ করবে।
+
+### C. গুরুত্বপূর্ণ সতর্কতা
+
+কোনও concept নতুন বা unfamiliar হলেই তাকে আলাদা Section দেবে না।
+
+আবার কোনও concept ছোট বা সহজ মনে হলেই তাকে inline introduction-এর মধ্যে সীমাবদ্ধ করবে না, যদি সেটি পরবর্তী একাধিক গুরুত্বপূর্ণ ধারণার foundation হয়।
+
+প্রতিটি গুরুত্বপূর্ণ concept-এর ক্ষেত্রে নির্ধারণ করো:
+
+1. এটি কোন কোন concept/idea-এর prerequisite?
+2. কতগুলি গুরুত্বপূর্ণ পরবর্তী অংশ এর ওপর নির্ভরশীল?
+3. এর নিজের কি substantive discussion আছে?
+4. আলাদা structural treatment না দিলে পরবর্তী discussion বোঝা কঠিন হবে কি না?
+5. তাই এটি:
+   - Inline Introduction
+   - Focused Explanation
+   - Dedicated Section
+   - অথবা সম্ভাব্য Chapter-level Treatment
+
+—কোনটির দাবি রাখে এবং কেন?
+
+---
+
+# 4. INTRODUCTION REQUIREMENT
+
+প্রতিটি গুরুত্বপূর্ণ নতুন concept / term / idea-এর ক্ষেত্রে নির্ধারণ করো পাঠকের কাছে সেটিকে কতটা explanation দিয়ে introduce করা প্রয়োজন।
+
+চারটি স্তর ব্যবহার করো:
+
+**Level 1 — Inline Introduction**  
+চলতি আলোচনার মধ্যে সংক্ষিপ্তভাবে introduce করলেই যথেষ্ট।
+
+**Level 2 — Focused Explanation**  
+কিছু context, explanation বা example প্রয়োজন, কিন্তু আলাদা substantive section প্রয়োজন নেই।
+
+**Level 3 — Dedicated Section**  
+ধারণাটির নিজস্ব explanation, distinction বা argument আছে এবং তাকে যথেষ্ট space দেওয়া দরকার।
+
+**Level 4 — Potential Chapter-Level Treatment**  
+ধারণাটি পরবর্তী একাধিক গুরুত্বপূর্ণ ধারণার foundation এবং/অথবা এর নিজস্ব substantive argument রয়েছে, যার জন্য chapter-level treatment প্রয়োজন হতে পারে।
+
+Level নির্ধারণ করার সময় উপরোক্ত **STRUCTURAL DEPTH RULE**-কে অগ্রাধিকার দেবে।
+
+---
+
+# 5. AUTHORIAL CONTENT IMPORTANCE
+
+Author Content-এর মধ্যে কোন বিষয়গুলো structure-এ বিশেষ গুরুত্ব পাওয়ার দাবি রাখে তা শনাক্ত করো।
+
+বিশেষভাবে খুঁজে দেখো:
+
+- নিজস্ব proposition
+- নিজস্ব মতামত
+- interpretation
+- metaphysical claim
+- conceptual distinction
+- original explanation
+- practical technique
+- গুরুত্বপূর্ণ example / analogy
+- intended conclusion
+
+এগুলোর মধ্যে কোনগুলো:
+
+- supporting material
+- এবং কোনগুলো book-এর substantive intellectual content
+
+তা আলাদা করো।
+
+**Author Content-এর কোনও গুরুত্বপূর্ণ বক্তব্য Source Content-এ নেই বলে সেটিকে secondary, unnecessary বা removable ধরে নেবে না।**
+
+---
+
+# 6. SOURCE CONTENT বনাম AUTHOR CONTENT RELATIONSHIP
+
+দুটি content source-এর মধ্যে relationship শনাক্ত করো।
+
+যেমন:
+
+- Source → Author-এর বক্তব্যকে support করছে
+- Author → Source-এর idea expand করছে
+- Author → Source-এর interpretation দিচ্ছে
+- Author → Source-এর idea-কে নতুন perspective দিচ্ছে
+- Source এবং Author → একই concept-কে ভিন্নভাবে দেখছে
+- Author Content → Source-এর বাইরে independent substantive idea আনছে
+
+যেখানে এমন relationship আছে, সেগুলো চিহ্নিত করো।
+
+---
+
+# 7. NATURAL CONCEPTUAL PROGRESSION
+
+এখন পর্যন্ত পাওয়া dependency-এর ভিত্তিতে দেখো:
+
+> পাঠকের understanding স্বাভাবিকভাবে কীভাবে এক concept থেকে পরের concept-এ যেতে পারে?
+
+একটি provisional progression দেখাও:
+
+**Concept / Idea A → Concept / Idea B → Concept / Idea C → ...**
+
+এটি এখনও Chapter/Section outline নয়।
+
+এটি শুধুমাত্র **conceptual এবং logical progression map**।
+
+যেখানে একাধিক সম্ভাব্য progression সম্ভব, সেখানে সবচেয়ে natural progression-টি দাও এবং প্রয়োজন হলে বিকল্পটির কথাও সংক্ষেপে উল্লেখ করো।
+
+---
+
+# 8. POTENTIAL STRUCTURAL IMPLICATIONS
+
+উপরের analysis-এর ভিত্তিতে শুধু সম্ভাব্য structural implications শনাক্ত করো।
+
+যেমন:
+
+- কোন concept আলাদা treatment দাবি করতে পারে
+- কোন concept শুধু চলতি আলোচনার মধ্যেই introduce করা উচিত
+- কোন দুটি concept একসঙ্গে আলোচনা করা স্বাভাবিক হতে পারে
+- কোন concept আগে introduce না করলে পরের discussion অস্পষ্ট হবে
+- কোথায় additional context প্রয়োজন হতে পারে
+- কোথায় Author Content-এর জন্য পর্যাপ্ত structural space নিশ্চিত করা প্রয়োজন
+
+তবে এখনও:
+
+- final Chapter সংখ্যা নির্ধারণ করবে না
+- final Section সংখ্যা নির্ধারণ করবে না
+- chapter titles তৈরি করবে না
+- final outline তৈরি করবে না
+
+---
+
+# 9. AUTHORIAL SPACE PROTECTION
+
+বিশেষভাবে পরীক্ষা করো:
+
+Author Content-এর কোনও গুরুত্বপূর্ণ proposition, explanation, interpretation, metaphysical claim, conceptual distinction, argument বা practical technique কি Source-driven structural logic-এর কারণে:
+
+- পর্যাপ্ত space হারাতে পারে?
+- অন্য কোনও concept-এর অধীনে unnecessarily subordinate হয়ে যেতে পারে?
+- আলাদা treatment-এর প্রয়োজন থাকা সত্ত্বেও ছোট করে ফেলা হতে পারে?
+- এমন কোনও জায়গায় চলে যেতে পারে যেখানে তার intended meaning বা impact দুর্বল হয়ে যায়?
+
+যদি এমন সম্ভাবনা থাকে, তা শনাক্ত করো।
+
+এক্ষেত্রে প্রশ্ন হবে:
+
+> “এই authorial content-কে বাদ দেব কি?”
+
+নয়।
+
+বরং:
+
+> **“Structure কীভাবে পরিবর্তন করলে এই authorial content-টি যথাযথভাবে serve করা যায়?”**
+
+---
+
+# IMPORTANT LIMITS
+
+এই ধাপে:
+
+- final outline তৈরি করবে না
+- chapter title তৈরি করবে না
+- subtitle তৈরি করবে না
+- writing template তৈরি করবে না
+- word count নির্ধারণ করবে না
+- author-এর content rewrite করবে না
+- নিজের নতুন proposition যোগ করবে না
+- Source-এর structure কপি করে বইয়ের structure বানাবে না
+- শুধুমাত্র structural neatness-এর জন্য substantive authorial content বাদ দেওয়ার সুপারিশ করবে না
+
+তোমার কাজ হলো:
+
+> **Content-এর architecture আবিষ্কার করা, structure impose করা নয়।**
+
+---
+
+# OUTPUT FORMAT
+
+উত্তরটি এই ক্রমে দাও:
+
+### 1. Conceptual Dependency Map
+
+### 2. Logical / Argument Dependency Map
+
+### 3. Structural Depth Analysis
+
+| Concept / Idea | কীসের prerequisite | কতগুলি গুরুত্বপূর্ণ ধারণা এর ওপর নির্ভরশীল | নিজস্ব substantive discussion আছে? | Recommended Treatment | কারণ |
+|---|---|---|---|---|---|
+
+### 4. Introduction Requirement Map
+
+### 5. Authorial Content — Structural Importance
+
+### 6. Source ↔ Author Content Relationship
+
+### 7. Natural Conceptual Progression
+
+### 8. Potential Structural Implications
+
+### 9. Authorial Space Protection — Key Findings
+
+শেষে একটি সংক্ষিপ্ত:
+
+## Dependency & Architecture Summary
+
+এখানে শুধু দাও:
+
+1. প্রধান foundational concepts
+2. প্রধান dependent concepts
+3. সবচেয়ে গুরুত্বপূর্ণ authorial content
+4. কোন concepts আলাদা structural treatment দাবি করতে পারে
+5. কোন concepts চলতি আলোচনার মধ্যেই introduce করা উচিত
+6. সবচেয়ে স্বাভাবিক conceptual progression
+7. পরবর্তী structural planning-এ যেসব বিষয় অবশ্যই মনে রাখতে হবে</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 4 -->
+        <div class="prompt-card" id="p4">
+            <div class="prompt-header">
+                <div class="prompt-number">4</div>
+                <h2 class="prompt-title">Content-to-Structure Map</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Source Content এবং Author Content-এর ওপর ভিত্তি করে আগের ধাপগুলোতে যে Concept, Core Topic, Dependency, Structural Depth এবং Introduction Requirement শনাক্ত করা হয়েছে, সেগুলো ব্যবহার করে এখন একটি **Content-to-Structure Map** তৈরি করো।
+
+এই ধাপের উদ্দেশ্য:
+
+> **Content-এর প্রয়োজন থেকে Structure-এর প্রয়োজন শনাক্ত করা।**
+
+এটি এখনও Final Outline তৈরির ধাপ নয়।
+
+মূল নীতি:
+
+> **Structure is in service of the content, not content in service of the structure.**
+
+অর্থাৎ আগে থেকে কোনও Chapter বা Section structure ধরে নিয়ে content-কে তার মধ্যে fit করবে না।
+
+বরং প্রতিটি গুরুত্বপূর্ণ content-এর:
+
+- ভূমিকা
+- logical function
+- dependency
+- relationship
+- structural importance
+- required explanation
+- required space
+- এবং natural placement
+
+বিশ্লেষণ করে দেখবে, সেই content-কে যথাযথভাবে deliver করার জন্য কী ধরনের structural treatment প্রয়োজন।
+
+---
+
+## 1. CONTENT UNIT IDENTIFICATION
+
+Source Content এবং Author Content থেকে এমন গুরুত্বপূর্ণ content units শনাক্ত করো যেগুলো বইয়ের substantive argument, explanation বা reader understanding-এর জন্য গুরুত্বপূর্ণ।
+
+Content unit বলতে বোঝাতে পারে:
+
+- একটি Core Topic
+- একটি গুরুত্বপূর্ণ concept
+- একটি authorial proposition
+- একটি argument
+- একটি explanation
+- একটি conceptual distinction
+- একটি interpretation
+- একটি metaphysical claim
+- একটি practical technique
+- একটি গুরুত্বপূর্ণ example বা analogy
+- একটি conclusion
+- অথবা এমন কোনও supporting idea যার ছাড়া পরবর্তী গুরুত্বপূর্ণ content বোঝা কঠিন।
+
+প্রতিটি content unit-এর একটি সংক্ষিপ্ত পরিচয় দাও।
+
+---
+
+## 2. EACH CONTENT UNIT-এর STRUCTURAL JOB
+
+প্রতিটি content unit-এর ক্ষেত্রে নির্ধারণ করো এটি বইয়ের মধ্যে মূলত কী কাজ করছে।
+
+প্রয়োজনে নিচের category ব্যবহার করো:
+
+- Foundation
+- Concept Introduction
+- Clarification
+- Explanation
+- Proposition
+- Argument
+- Conceptual Distinction
+- Interpretation
+- Development / Expansion
+- Consequence / Implication
+- Example / Analogy
+- Practical Application
+- Technique
+- Transition / Bridge
+- Conclusion
+
+একটি content unit-এর একাধিক structural job থাকতে পারে।
+
+---
+
+## 3. CONTENT DEPENDENCY
+
+প্রতিটি content unit-এর ক্ষেত্রে দেখো:
+
+- এটি বুঝতে আগে কোন content প্রয়োজন?
+- এটি কোন পূর্ববর্তী content-এর ওপর দাঁড়িয়ে আছে?
+- এটি পরবর্তী কোন content-এর ভিত্তি তৈরি করছে?
+
+Dependency-এর কারণ সংক্ষেপে ব্যাখ্যা করো।
+
+প্রয়োজনে দেখাও:
+
+**A → B → C**
+
+এখানে A আগে প্রয়োজন কারণ B, A-এর ওপর নির্ভরশীল।
+
+---
+
+## 4. STRUCTURAL SPACE REQUIREMENT
+
+প্রতিটি content unit-এর জন্য নির্ধারণ করো, সেটিকে যথাযথভাবে deliver করতে কতটা structural space প্রয়োজন।
+
+নিচের distinction ব্যবহার করো:
+
+### Inline
+চলতি আলোচনার মধ্যে সংক্ষিপ্তভাবে introduce করলেই যথেষ্ট।
+
+### Focused Subsection
+কিছুটা independent explanation, example বা clarification প্রয়োজন।
+
+### Dedicated Section
+নিজস্ব substantive discussion, distinction, argument বা explanation রয়েছে।
+
+### Potential Chapter-Level Treatment
+এটি একাধিক গুরুত্বপূর্ণ পরবর্তী content-এর foundation এবং/অথবা এর নিজস্ব substantial intellectual discussion রয়েছে; তাই chapter-level treatment বিবেচনা করা যেতে পারে।
+
+কোনও content unit-কে শুধু নতুন বা গুরুত্বপূর্ণ মনে হচ্ছে বলে বড় structural space দেবে না।
+
+আবার ছোট মনে হচ্ছে বলে ছোট space-এ সীমাবদ্ধ করবে না, যদি তার dependency বা substantive role তা দাবি করে।
+
+---
+
+# 5. AUTHORIAL SPACE REQUIREMENT
+
+Author Content-এর প্রতিটি গুরুত্বপূর্ণ substantive অংশের ক্ষেত্রে বিশেষভাবে পরীক্ষা করো:
+
+- এটি কি নিজস্ব argument দাবি করে?
+- এটি কি Source Content-এর বাইরে নতুন intellectual contribution?
+- এটি কি এমন কোনও মতামত বা interpretation যা author নিজে প্রতিষ্ঠা করতে চান?
+- এটি কি এমন কোনও explanation যার জন্য যথেষ্ট space প্রয়োজন?
+- এটি কি কোনও metaphysical claim বা conceptual proposition যা অন্য content-এর মধ্যে চাপা পড়ে যেতে পারে?
+- এটি কি practical technique যার জন্য যথেষ্ট explanation প্রয়োজন?
+
+যদি প্রয়োজন হয়, **Authorial Space Requirement** হিসেবে আলাদা করে উল্লেখ করো।
+
+মূল নিয়ম:
+
+> **Authorial Content-কে existing Source-driven structure-এর মধ্যে fit করার জন্য তার প্রয়োজনীয় space কমানো যাবে না।**
+
+যদি existing conceptual progression-এর মধ্যে Author Content স্বাভাবিকভাবে fit না করে, তাহলে structural expansion বা restructuring-এর প্রয়োজন বিবেচনা করবে।
+
+---
+
+# 6. CONTENT GROUPING
+
+এখন দেখো কোন কোন content unit স্বাভাবিকভাবে একসঙ্গে আলোচনা করা যায়।
+
+একসঙ্গে রাখার কারণ হতে পারে:
+
+- একই ধারণা develop করছে
+- একই argument-এর অংশ
+- একটির explanation অন্যটির সঙ্গে সরাসরি যুক্ত
+- একই conceptual question-এর উত্তর দিচ্ছে
+- একই practical function পালন করছে
+
+আবার এমন content unit-কে জোর করে group করবে না যাদের আলাদা treatment প্রয়োজন।
+
+বিশেষভাবে খেয়াল রাখবে:
+
+> **একসঙ্গে রাখা মানেই একই Section নয়।**
+
+শুধু natural conceptual relationship শনাক্ত করো।
+
+---
+
+# 7. STRUCTURAL BOUNDARY
+
+এখন প্রতিটি সম্ভাব্য content group-এর ক্ষেত্রে দেখো:
+
+- কোথায় একটি discussion স্বাভাবিকভাবে শুরু হয়?
+- কোথায় একটি independent idea বা argument শুরু হয়?
+- কোথায় একটি discussion শেষ হয়ে পরবর্তী distinct discussion শুরু হয়?
+- কোথায় reader-এর জন্য নতুন conceptual stage তৈরি হয়?
+
+এর ভিত্তিতে সম্ভাব্য structural boundary শনাক্ত করো।
+
+এখনও Chapter/Section-এর final নাম বা সংখ্যা নির্ধারণ করবে না।
+
+---
+
+# 8. NATURAL READING SEQUENCE
+
+এখন dependency এবং grouping-এর ভিত্তিতে content units-এর সবচেয়ে স্বাভাবিক reading sequence নির্ধারণ করো।
+
+Sequence-এর ক্ষেত্রে বিবেচনা করো:
+
+- foundation আগে আসবে
+- prerequisite যথাস্থানে introduce হবে
+- substantive authorial argument যথেষ্ট preparation পাওয়ার পরে আসবে
+- explanation প্রয়োজনের আগে আসবে
+- consequence বা implication তার কারণ/মূল ধারণার পরে আসবে
+- practical technique প্রয়োজনীয় conceptual understanding-এর পরে আসবে
+
+একটি provisional sequence দেখাও:
+
+**Content A → Content B → Content C → Content D**
+
+এটি Final Outline নয়।
+
+---
+
+# 9. STRUCTURE OPTIONS
+
+যদি একই content-কে একাধিকভাবে structure করা সম্ভব হয়, তাহলে সর্বাধিক একটি বা দুটি viable structural approach দেখাতে পারো।
+
+প্রতিটি option-এর ক্ষেত্রে বলো:
+
+- কোন content কীভাবে grouped হচ্ছে
+- কেন এই structure content-কে serve করছে
+- কোথায় Authorial Content-এর জন্য space নিশ্চিত হচ্ছে
+- কোন option-এর কী সুবিধা বা limitation
+
+অপ্রয়োজনীয়ভাবে বহু structural option তৈরি করবে না।
+
+---
+
+# 10. STRUCTURAL RISK CHECK
+
+Final outline তৈরির আগে পরীক্ষা করো:
+
+### Risk 1
+কোনও গুরুত্বপূর্ণ Authorial Content কি structure-এর কারণে চাপা পড়ে যেতে পারে?
+
+### Risk 2
+কোনও foundational concept কি প্রয়োজনের তুলনায় ছোট treatment পেতে পারে?
+
+### Risk 3
+কোনও prerequisite concept কি ভুল করে আলাদা Section/Chapter হয়ে যেতে পারে?
+
+### Risk 4
+দুটি স্বতন্ত্র substantive idea কি শুধু structure compact রাখার জন্য এক জায়গায় ঢুকে যাচ্ছে?
+
+### Risk 5
+কোনও Source-derived structure কি Author Content-এর intended direction-কে নিয়ন্ত্রণ করছে?
+
+### Risk 6
+কোনও content কি শুধু “outline সুন্দর” রাখার জন্য বাদ বা reduced হওয়ার ঝুঁকিতে আছে?
+
+প্রতিটি relevant risk শনাক্ত করো এবং structural solution দাও।
+
+---
+
+# OUTPUT FORMAT
+
+প্রথমে একটি প্রধান table দাও:
+
+| Content Unit | Source / Author | Structural Job | আগে কী প্রয়োজন | পরের কীসের ভিত্তি | Grouping | Required Structural Space | Authorial Space Requirement | Structural Treatment-এর কারণ |
+|---|---|---|---|---|---|---|---|---|
+
+তারপর দাও:
+
+### 1. Content Grouping Map
+
+কোন কোন content স্বাভাবিকভাবে একসঙ্গে কাজ করছে।
+
+### 2. Structural Boundary Map
+
+কোথায় substantive discussion-এর natural boundary তৈরি হচ্ছে এবং কেন।
+
+### 3. Natural Reading Sequence
+
+Content-এর সবচেয়ে স্বাভাবিক progression।
+
+### 4. Structural Options
+
+প্রয়োজনে সর্বাধিক দুটি viable structural approach।
+
+### 5. Structural Risk Check
+
+কোথায় structure content-এর ওপর চাপ তৈরি করতে পারে এবং কীভাবে তা এড়ানো যায়।
+
+### 6. Content-to-Structure Summary
+
+শেষে সংক্ষেপে বলো:
+
+- কোন content আলাদা structural treatment দাবি করছে
+- কোন content inline introduction হিসেবে যথেষ্ট
+- কোন content subsection-level treatment দাবি করছে
+- কোন content সম্ভাব্য chapter-level treatment দাবি করছে
+- কোন Authorial Content-এর জন্য বিশেষ structural space নিশ্চিত করতে হবে
+- কোন structural decision এখনও Final Outline তৈরির আগে খোলা রাখা উচিত
+
+---
+
+## IMPORTANT LIMITS
+
+এই ধাপে:
+
+- Final Chapter সংখ্যা নির্ধারণ করবে না
+- Final Section সংখ্যা নির্ধারণ করবে না
+- Chapter title তৈরি করবে না
+- Subtitle তৈরি করবে না
+- Final Outline তৈরি করবে না
+- Writing Template তৈরি করবে না
+- Word Count নির্ধারণ করবে না
+- Author Content rewrite করবে না
+- নিজের কোনও substantive idea যোগ করবে না
+
+এই ধাপে তোমার কাজ হলো:
+
+> **Content-এর structural requirements map করা।**
+
+Final Structure তৈরি হবে এই map-এর পরবর্তী ধাপে।
+
+সবসময় মনে রাখবে:
+
+> **Content determines structural need.  
+> Structural need determines structure.  
+> Structure does not determine what the content should be.**</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 5 -->
+        <div class="prompt-card" id="p5">
+            <div class="prompt-header">
+                <div class="prompt-number">5</div>
+                <h2 class="prompt-title">Macro Structural Architecture</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Source Content এবং Author Content-এর ভিত্তিতে আগের ধাপগুলোতে যে Concept, Core Topic, Dependency, Structural Depth, Introduction Requirement এবং Content-to-Structure Map তৈরি হয়েছে, সেগুলোকে ব্যবহার করে এখন বইটির **Structural Architecture** নির্ধারণ করো।
+
+এই ধাপের উদ্দেশ্য Final Chapter/Section Outline তৈরি করা নয়।
+
+এই ধাপের উদ্দেশ্য হলো:
+
+> **Content-to-Structure Map-এ শনাক্ত হওয়া structural requirements-গুলোকে একত্র করে বইটির একটি coherent macro-architecture নির্ধারণ করা।**
+
+মূল নীতি:
+
+> **Structure is in service of the content, not content in service of the structure.**
+
+অর্থাৎ কোনও predetermined book structure, chapter formula বা conventional format-এর সঙ্গে content-কে জোর করে মানিয়ে নেবে না।
+
+বরং content-এর nature, dependency, logical progression, authorial importance এবং reader understanding-এর প্রয়োজন থেকেই architecture নির্ধারণ করবে।
+
+---
+
+## 1. MAJOR STRUCTURAL BLOCKS IDENTIFY করো
+
+Content-to-Structure Map-এর ভিত্তিতে বইটির মধ্যে স্বাভাবিকভাবে তৈরি হওয়া বড় structural blocks শনাক্ত করো।
+
+প্রতিটি block-এর ক্ষেত্রে বলো:
+
+- এই block-এর মূল কাজ কী?
+- কোন ধরনের content এখানে একত্র হচ্ছে?
+- কেন এই content-গুলো একসঙ্গে থাকা স্বাভাবিক?
+- কোন পূর্ববর্তী understanding-এর ওপর এটি নির্ভর করছে?
+- পরবর্তী কোন block-এর জন্য এটি foundation তৈরি করছে?
+
+এখানে “Chapter” শব্দটি ব্যবহার না করে **Structural Block** হিসেবে ভাববে।
+
+---
+
+## 2. CONTENT GROUPING-এর MACRO LOGIC
+
+দেখো কোন content groups একটি বড় conceptual movement তৈরি করছে।
+
+যেমন:
+
+**Foundation → Understanding → Development → Implication → Application**
+
+এটি শুধু উদাহরণ। Content যা দাবি করে, সেই অনুযায়ী অন্য ধরনের progression তৈরি হতে পারে।
+
+ কোনও predetermined pattern ব্যবহার করবে না।
+
+প্রতিটি macro group-এর grouping-এর কারণ দাও।
+
+---
+
+## 3. MACRO DEPENDENCY
+
+Major Structural Blocks-এর মধ্যে dependency নির্ধারণ করো।
+
+দেখো:
+
+- কোন block আগে প্রয়োজন?
+- কোন block কোন পূর্ববর্তী block-এর ওপর নির্ভরশীল?
+- কোন block পরবর্তী একাধিক discussion-এর foundation?
+- কোথায় reader-এর understanding-এর একটি নতুন stage শুরু হচ্ছে?
+
+প্রয়োজনে দেখাও:
+
+**Block A → Block B → Block C → Block D**
+
+প্রতিটি গুরুত্বপূর্ণ dependency-এর কারণ সংক্ষেপে বলো।
+
+---
+
+## 4. AUTHORIAL CONTENT-এর MACRO POSITION
+
+Author Content-এর substantive propositions, arguments, interpretations, metaphysical claims, explanations এবং practical techniques-গুলো macro architecture-এর মধ্যে কোথায় এবং কীভাবে জায়গা দাবি করছে তা নির্ধারণ করো।
+
+বিশেষভাবে পরীক্ষা করো:
+
+- Authorial Content কি কোনও existing structural block-এর মধ্যে স্বাভাবিকভাবে fit করছে?
+- নাকি সেটির জন্য আলাদা structural space প্রয়োজন?
+- কোনও authorial proposition কি একাধিক block-এর মধ্যে connecting role পালন করছে?
+- Source Content-এর architecture কি কোথাও Author Content-এর intended direction-কে constrain করছে?
+
+যদি constrain করে, তাহলে architecture পরিবর্তনের প্রয়োজন চিহ্নিত করো।
+
+**Authorial Content-কে existing structure-এর সঙ্গে fit করার জন্য তার substantive importance কমিয়ে দেবে না।**
+
+---
+
+## 5. STRUCTURAL BOUNDARIES
+
+Major structural blocks-এর মধ্যে natural boundary কোথায় তৈরি হচ্ছে তা নির্ধারণ করো।
+
+একটি নতুন block প্রয়োজন হতে পারে যদি:
+
+- নতুন conceptual stage শুরু হয়
+- নতুন central question বা argument শুরু হয়
+- আগের discussion-এর একটি meaningful resolution ঘটে
+- নতুন ধরনের reasoning শুরু হয়
+- নতুন ধরনের content function শুরু হয়
+- reader-এর understanding-এর level পরিবর্তিত হয়
+
+শুধু topic পরিবর্তন হলেই নতুন block তৈরি করবে না।
+
+---
+
+## 6. STRUCTURAL DEPTH BALANCE
+
+প্রতিটি major structural block-এর relative importance বিবেচনা করো।
+
+দেখো:
+
+- কোনও block কি প্রয়োজনের তুলনায় অতিরিক্ত বড় হয়ে যাচ্ছে?
+- কোনও গুরুত্বপূর্ণ block কি অতিরিক্ত ছোট হয়ে যাচ্ছে?
+- কোনও independent substantive discussion কি অন্য block-এর মধ্যে চাপা পড়ে যাচ্ছে?
+- কোনও minor prerequisite কি অযথা বড় structural unit হয়ে যাচ্ছে?
+
+এখানে লক্ষ্য হবে **balanced structure**, কিন্তু symmetry বা equal size তৈরি করা নয়।
+
+> Content-এর গুরুত্ব এবং প্রয়োজন অনুযায়ী structural weight নির্ধারিত হবে।
+
+---
+
+## 7. READER UNDERSTANDING PROGRESSION
+
+Macro architecture-টি পাঠকের understanding-এর দিক থেকে পরীক্ষা করো।
+
+প্রতিটি block-এর শেষে পাঠক:
+
+- কী বুঝেছেন?
+- কী নতুন প্রশ্ন বা প্রয়োজন তৈরি হয়েছে?
+- কেন পরবর্তী block-এ যাওয়া স্বাভাবিক?
+- পরবর্তী block-এর জন্য কী groundwork তৈরি হয়েছে?
+
+এভাবে পুরো architecture-এর একটি natural conceptual journey দেখাও।
+
+এটি chapter-level transition নয়; এটি শুধু **macro-level reader progression**।
+
+---
+
+## 8. ARCHITECTURE OPTIONS
+
+যদি content-এর জন্য একাধিক genuinely viable macro-architecture থাকে, তাহলে সর্বাধিক **দুটি** option দাও।
+
+প্রতিটি option-এর ক্ষেত্রে বলো:
+
+- মূল organising principle কী
+- কোন content কোথায় যাচ্ছে
+- কেন এটি content-কে serve করছে
+- Authorial Content-এর জন্য কোন option বেশি room তৈরি করছে
+- কোন option-এর প্রধান limitation কী
+
+যদি একটি architecture-ই স্পষ্টভাবে সবচেয়ে উপযুক্ত হয়, তাহলে শুধু সেটিই দাও।
+
+অপ্রয়োজনীয়ভাবে multiple options তৈরি করবে না।
+
+---
+
+## 9. STRUCTURAL RISK CHECK
+
+Final Chapter/Section Structure তৈরির আগে architecture-টি পরীক্ষা করো।
+
+বিশেষভাবে দেখো:
+
+1. Structure কি Source Content-এর logic-এর কারণে Author Content-কে subordinate করছে?
+2. কোনও foundational concept কি যথেষ্ট structural importance পাচ্ছে না?
+3. কোনও prerequisite concept কি অযথা বড় structural unit হয়ে যাচ্ছে?
+4. কোনও গুরুত্বপূর্ণ authorial proposition কি অন্য content-এর মধ্যে হারিয়ে যাওয়ার ঝুঁকিতে আছে?
+5. কোনও unrelated content কি শুধু structure compact রাখার জন্য একসঙ্গে রাখা হচ্ছে?
+6. architecture কি reader-এর natural understanding-এর বদলে structural neatness-কে অগ্রাধিকার দিচ্ছে?
+7. কোনও content কি বাদ দেওয়া বা কমানোর প্রয়োজন বলে মনে হচ্ছে শুধু architecture সুন্দর রাখার জন্য?
+
+যদি কোনও risk থাকে, content বাদ দেওয়ার আগে structural solution খুঁজবে।
+
+---
+
+# OUTPUT FORMAT
+
+## 1. Proposed Macro Architecture
+
+একটি high-level structural map দাও।
+
+উদাহরণ:
+
+**Structural Block A → Structural Block B → Structural Block C → Structural Block D**
+
+প্রতিটি block-এর সঙ্গে তার core function উল্লেখ করো।
+
+---
+
+## 2. Structural Block Analysis
+
+| Structural Block | মূল কাজ | অন্তর্ভুক্ত Content-এর ধরন | আগে কী প্রয়োজন | পরের কীসের ভিত্তি | কেন এই grouping |
+|---|---|---|---|---|---|
+
+---
+
+## 3. Macro Dependency Map
+
+প্রধান structural dependencies দেখাও এবং প্রতিটির কারণ বলো।
+
+---
+
+## 4. Authorial Content Position
+
+কোন গুরুত্বপূর্ণ Authorial Content কোন structural block-এ বিশেষ space দাবি করছে তা দেখাও।
+
+---
+
+## 5. Natural Reader Progression
+
+Block-by-block পাঠকের understanding কীভাবে এগোচ্ছে তা সংক্ষেপে দেখাও।
+
+---
+
+## 6. Structural Boundary Decisions
+
+কোথায় নতুন structural block প্রয়োজন এবং কেন।
+
+---
+
+## 7. Architecture Options
+
+প্রয়োজনে সর্বাধিক দুটি viable architecture option দাও এবং তাদের মধ্যে কোনটি content-এর জন্য বেশি উপযুক্ত তা বলো।
+
+---
+
+## 8. Structural Risk Check
+
+কোথায় structure content-এর ওপর চাপ তৈরি করতে পারে এবং কীভাবে তা এড়ানো যায়।
+
+---
+
+# FINAL DECISION
+
+শেষে একটি **Recommended Structural Architecture** দাও।
+
+এখানে শুধু major structural blocks এবং তাদের logical sequence দেখাবে।
+
+এখনও:
+
+- Chapter number দেবে না
+- Chapter title দেবে না
+- Section title দেবে না
+- Subtitle দেবে না
+- Final Outline তৈরি করবে না
+
+কারণ এগুলো পরবর্তী ধাপের কাজ।
+
+শেষ সিদ্ধান্তটি এই প্রশ্নের উত্তর দেবে:
+
+> **“এই content-কে তার substantive meaning, authorial intent এবং natural reader progression অক্ষুণ্ণ রেখে deliver করতে গেলে বইটির overall structural architecture কেমন হওয়া প্রয়োজন?”**
+
+সবশেষে মনে রাখবে:
+
+> **Content determines structural need.  
+> Structural need determines architecture.  
+> Architecture determines the eventual Chapter/Section structure.**
+
+কখনও উল্টো পথে যাবে না।</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 6 -->
+        <div class="prompt-card" id="p6">
+            <div class="prompt-header">
+                <div class="prompt-number">6</div>
+                <h2 class="prompt-title">Final Chapter / Section Structure</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Source Content এবং Author Content-এর ভিত্তিতে আগের ধাপগুলোতে যে:
+
+1. Concept & Terminology Analysis
+2. Core Topic Analysis
+3. Dependency & Structural Depth Analysis
+4. Content-to-Structure Map
+5. Recommended Structural Architecture
+
+তৈরি হয়েছে, সেগুলো ব্যবহার করে এখন বইটির **Final Chapter / Section Structure** তৈরি করো।
+
+এই ধাপের উদ্দেশ্য হলো:
+
+> **আগের Content Analysis এবং Structural Architecture-এর সিদ্ধান্তগুলোকে একটি ব্যবহারযোগ্য Chapter / Section structure-এ রূপান্তর করা।**
+
+মূল নীতি:
+
+> **Structure is in service of the content, not content in service of the structure.**
+
+অর্থাৎ Chapter / Section আগে থেকে নির্ধারণ করে content-কে তার মধ্যে fit করবে না।
+
+বরং আগের ধাপগুলোতে শনাক্ত হওয়া:
+
+- substantive content
+- authorial propositions
+- conceptual dependencies
+- logical progression
+- structural depth
+- content grouping
+- structural boundaries
+- authorial space requirements
+- natural reader progression
+
+—এসবের ভিত্তিতে Chapter / Section structure তৈরি করবে।
+
+---
+
+# 1. STRUCTURE MUST EMERGE FROM THE ARCHITECTURE
+
+Prompt 5-এর Recommended Structural Architecture-কে starting framework হিসেবে ব্যবহার করো।
+
+প্রতিটি Structural Block-কে প্রয়োজন অনুযায়ী Chapter বা একাধিক Section-এ রূপান্তর করো।
+
+তবে কোনও Structural Block-কে শুধু symmetry বা visual neatness-এর জন্য ভেঙে বা বড় করবে না।
+
+যদি একটি Structural Block-এর মধ্যে একাধিক স্বতন্ত্র substantive discussion থাকে, প্রয়োজনে তাকে একাধিক Chapter / Section-এ ভাগ করো।
+
+আবার একাধিক ছোট content unit যদি একটি coherent discussion তৈরি করে, প্রয়োজনে সেগুলোকে একই Section-এর মধ্যে রাখো।
+
+---
+
+# 2. CHAPTER / SECTION DECISION
+
+প্রতিটি structural unit-এর ক্ষেত্রে সিদ্ধান্ত নাও এটি:
+
+- Chapter
+- Section
+- Subsection
+- অথবা চলতি আলোচনার অংশ
+
+হওয়া উচিত কি না।
+
+এই সিদ্ধান্তের ক্ষেত্রে আগের **Structural Depth Rule** strictly follow করবে:
+
+> **যে ধারণা পুরো পরবর্তী কাঠামোর ভিত্তি, সেটিকে আলাদা Section দেওয়া হবে; আর যে ধারণা কেবল পরের ধারণা বোঝার জন্য প্রয়োজন, সেটিকে চলতি আলোচনার মধ্যেই introduce করা হবে।**
+
+কোনও concept নতুন বা গুরুত্বপূর্ণ হলেই তাকে আলাদা Chapter/Section দেবে না।
+
+আবার কোনও concept ছোট মনে হচ্ছে বলে তাকে inline discussion-এ সীমাবদ্ধ করবে না, যদি তার substantive বা foundational role তা দাবি করে।
+
+---
+
+# 3. EVERY CHAPTER / SECTION MUST HAVE A CONTENT PURPOSE
+
+প্রতিটি Chapter / Section-এর ক্ষেত্রে স্পষ্ট করো:
+
+- এটি কোন substantive content deliver করছে?
+- এর মূল কাজ কী?
+- কোন Authorial Content এখানে থাকবে?
+- কোন Core Topic এখানে develop হবে?
+- আগের Chapter/Section থেকে কেন এখানে আসা হচ্ছে?
+- পরের Chapter/Section-এর জন্য কী groundwork তৈরি হবে?
+
+Chapter/Section-এর purpose এমনভাবে নির্ধারণ করবে না যাতে Author Content-কে সেই purpose-এর মধ্যে জোর করে fit করতে হয়।
+
+বরং:
+
+> **Content-এর existing purpose থেকেই structural purpose নির্ধারণ করবে।**
+
+---
+
+# 4. AUTHORIAL CONTENT MUST REMAIN VISIBLE
+
+Final Structure তৈরি করার সময় নিশ্চিত করো যে Author Content-এর গুরুত্বপূর্ণ:
+
+- propositions
+- opinions
+- arguments
+- interpretations
+- metaphysical claims
+- explanations
+- conceptual distinctions
+- practical techniques
+- examples
+- analogies
+- conclusions
+
+—কোনওটাই শুধু Source Content-এর তুলনায় secondary বলে structure-এর মধ্যে হারিয়ে যাচ্ছে না।
+
+প্রতিটি substantive Authorial Content-এর একটি যথাযথ structural home থাকতে হবে।
+
+যদি কোনও Authorial Content-এর জন্য existing structure যথেষ্ট না হয়:
+
+> **structure expand, divide, rearrange বা modify করো।**
+
+Authorial Content বাদ দিয়ে structure compact করার চেষ্টা করবে না।
+
+---
+
+# 5. NATURAL SEQUENCE
+
+Chapter / Section-এর sequence নির্ধারণ করো:
+
+- conceptual dependency
+- logical dependency
+- reader readiness
+- natural understanding
+- argument progression
+- practical progression
+
+এর ভিত্তিতে।
+
+শুধু topic similarity-এর ভিত্তিতে sequence নির্ধারণ করবে না।
+
+প্রতিটি Chapter / Section-এর আগে-পরে relationship দেখাও:
+
+**Chapter A → Chapter B → Chapter C**
+
+এবং সংক্ষেপে বলো কেন এই ক্রমটি সবচেয়ে natural।
+
+---
+
+# 6. CHAPTER / SECTION BOUNDARIES
+
+প্রতিটি Chapter / Section-এর boundary-এর কারণ শনাক্ত করো।
+
+নতুন Chapter / Section শুরু হবে যখন:
+
+- নতুন conceptual stage শুরু হচ্ছে
+- স্বতন্ত্র substantive argument শুরু হচ্ছে
+- একটি গুরুত্বপূর্ণ foundation তৈরি হচ্ছে
+- নতুন ধরনের discussion শুরু হচ্ছে
+- reader-এর understanding-এর একটি meaningful shift হচ্ছে
+- অথবা content-এর জন্য নতুন structural space প্রয়োজন হচ্ছে
+
+শুধু topic পরিবর্তন হলেই নতুন Chapter তৈরি করবে না।
+
+---
+
+# 7. STRUCTURAL ECONOMY
+
+Structure যতটা সম্ভব compact এবং coherent রাখো, কিন্তু compactness-এর জন্য substantive content sacrifice করবে না।
+
+অর্থাৎ:
+
+- unnecessary Chapter তৈরি করবে না
+- unnecessary Section তৈরি করবে না
+- minor prerequisite-কে full chapter বানাবে না
+- কিন্তু গুরুত্বপূর্ণ Authorial Content-কে শুধু structure ছোট রাখার জন্য subordinate করবে না
+
+লক্ষ্য:
+
+> **Minimum necessary structure, maximum support for substantive content.**
+
+---
+
+# 8. INTRODUCTION PLACEMENT
+
+আগের Introduction Requirement Analysis ব্যবহার করে দেখাও:
+
+- কোন নতুন concept কোন Chapter/Section-এ প্রথম introduce হবে
+- কোন concept inline থাকবে
+- কোন concept-এর জন্য focused explanation দরকার
+- কোন concept আগে establish না করলে পরের discussion বোঝা যাবে না
+
+কোনও concept-কে শুধু “নতুন” বলে আলাদা Chapter/Section দেবে না।
+
+---
+
+# 9. CHAPTER / SECTION CONTENT MAP
+
+প্রতিটি Chapter / Section-এর অধীনে স্পষ্টভাবে দেখাও:
+
+- Core Topic
+- Supporting Concepts
+- Authorial Content
+- Source Content
+- Key Argument / Explanation
+- Practical Content (যদি থাকে)
+- Chapter/Section-এর intended outcome
+
+এখানে নতুন substantive content তৈরি করবে না।
+
+শুধু existing Source ও Author Content-এর structural placement দেখাবে।
+
+---
+
+# 10. FINAL STRUCTURE QUALITY CHECK
+
+Final structure তৈরি করার পর পুরো structure-টি আবার পরীক্ষা করো।
+
+বিশেষভাবে দেখো:
+
+### A. Content Coverage
+সব গুরুত্বপূর্ণ substantive content কি structure-এর মধ্যে জায়গা পেয়েছে?
+
+### B. Authorial Coverage
+সব গুরুত্বপূর্ণ Authorial Content কি যথাযথ structural space পেয়েছে?
+
+### C. Dependency
+কোনও concept কি তার prerequisite-এর আগে চলে এসেছে?
+
+### D. Structural Depth
+কোনও foundational concept কি যথেষ্ট structural treatment পেয়েছে?
+
+### E. Over-structuring
+কোনও minor prerequisite বা supporting idea কি অযথা বড় Chapter/Section হয়ে গেছে?
+
+### F. Under-structuring
+কোনও substantive discussion কি অন্য content-এর মধ্যে চাপা পড়ে গেছে?
+
+### G. Natural Progression
+পাঠক কি স্বাভাবিকভাবে এক Chapter/Section থেকে পরেরটিতে যেতে পারবেন?
+
+### H. Structural Constraint
+কোথাও কি structure Author Content-এর intended meaning, argument বা expression-কে সীমাবদ্ধ করছে?
+
+যদি করে, structure সংশোধন করো।
+
+---
+
+# OUTPUT FORMAT
+
+## 1. FINAL BOOK STRUCTURE
+
+এই format-এ দাও:
+
+### Chapter 1 — [Title]
+
+**Chapter Purpose:**  
+এই Chapter কেন আছে এবং কোন content deliver করছে।
+
+**Core Topic:**  
+...
+
+**Sections:**
+
+- Section 1.1 — [Title]
+  - Core Content:
+  - Authorial Content:
+  - Supporting Source Content:
+  - Structural Role:
+
+- Section 1.2 — [Title]
+  - Core Content:
+  - Authorial Content:
+  - Supporting Source Content:
+  - Structural Role:
+
+### Chapter 2 — [Title]
+
+একই format অনুসরণ করবে।
+
+---
+
+## 2. CHAPTER / SECTION DEPENDENCY MAP
+
+দেখাও:
+
+**Chapter 1 → Chapter 2 → Chapter 3 → ...**
+
+প্রতিটি transition-এর পাশে সংক্ষেপে বলো কেন পরের Chapter আগেরটির ওপর নির্ভরশীল।
+
+---
+
+## 3. AUTHORIAL CONTENT PLACEMENT MAP
+
+| Authorial Content | কোথায় রাখা হয়েছে | কেন এখানে | কীভাবে যথেষ্ট space নিশ্চিত হয়েছে |
+|---|---|---|---|
+
+---
+
+## 4. CONCEPT INTRODUCTION MAP
+
+| Concept / Term | প্রথম কোথায় introduce হবে | Introduction Type | কেন |
+|---|---|---|---|
+| ... | ... | Inline / Focused / Section / Chapter | ... |
+
+---
+
+## 5. FINAL STRUCTURE QUALITY CHECK
+
+সংক্ষেপে জানাও:
+
+- কোনও substantive content বাদ পড়েছে কি না
+- কোনও Authorial Content structural constraint-এর মধ্যে পড়েছে কি না
+- কোনও concept অতিরিক্ত structural space পেয়েছে কি না
+- কোনও গুরুত্বপূর্ণ concept-এর structural space কম হয়েছে কি না
+- dependency বা sequence-এর কোনও সমস্যা আছে কি না
+- overall structure content-কে যথাযথভাবে serve করছে কি না
+
+---
+
+# IMPORTANT LIMITS
+
+এই ধাপে:
+
+- Source বা Author Content-এর বাইরে নতুন substantive idea যোগ করবে না
+- Author-এর মতামত পরিবর্তন করবে না
+- Authorial Content-এর intellectual direction পরিবর্তন করবে না
+- শুধু structure সুন্দর করার জন্য substantive content বাদ দেবে না
+- Chapter/Section-এর content নিজে থেকে invent করবে না
+- Writing Template তৈরি করবে না
+- Word Count নির্ধারণ করবে না
+- Manuscript rewrite করবে না
+
+Final Structure-এর প্রতিটি Chapter/Section-এর অস্তিত্বের পেছনে আগের ধাপগুলোর content-based justification থাকতে হবে।
+
+শেষে নিজেকে এই প্রশ্নটি করো:
+
+> **“আমি কি content-কে একটি predetermined structure-এর মধ্যে fit করেছি, নাকি content-এর প্রয়োজন থেকেই এই structure তৈরি হয়েছে?”**
+
+শুধুমাত্র দ্বিতীয় অবস্থাটিই গ্রহণযোগ্য।
+
+মূল নীতি আবার মনে রাখবে:
+
+> **Content determines structural need.  
+> Structural need determines architecture.  
+> Architecture determines Chapter / Section structure.**</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 7 -->
+        <div class="prompt-card" id="p7">
+            <div class="prompt-header">
+                <div class="prompt-number">7</div>
+                <h2 class="prompt-title">Naming Titles & Subtitles</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>আপলোড করা Source Content এবং Author Content-এর পাশাপাশি Steps 1–6-এর সম্পূর্ণ output ব্যবহার করুন।
+
+বিশেষভাবে Step 6-এর FINAL CHAPTER / SECTION STRUCTURE-কে
+বর্তমান structural authority হিসেবে গ্রহণ করুন।
+
+এই ধাপে আপনার কাজ হলো finalized content-driven structure-এর জন্য:
+
+1. Book Title
+2. Book Subtitle
+3. Chapter Title
+4. Chapter Subtitle — যেখানে সত্যিই প্রয়োজন
+5. Section Title
+6. Section Subtitle — যেখানে সত্যিই প্রয়োজন
+
+প্রস্তাব করা।
+
+==================================================
+CORE PRINCIPLE
+==================================================
+
+“Titles serve the content and structure, not the other way around.”
+
+Final structure ইতিমধ্যেই Content → Structural Need → Architecture-এর ভিত্তিতে
+নির্ধারিত হয়েছে।
+
+অতএব কোনো Title, Subtitle বা naming pattern-এর কারণে
+finalized structure পরিবর্তন, পুনর্বিন্যাস, সংক্ষিপ্ত বা সম্প্রসারিত করা যাবে না।
+
+Title structure-এর expression হবে;
+structure তৈরির কারণ হবে না।
+
+==================================================
+1. BOOK TITLE
+==================================================
+
+Book Title এমন হতে হবে যাতে বইটির মূল intellectual subject এবং
+central inquiry-এর প্রকৃতি বোঝা যায়।
+
+Title:
+
+- অত্যন্ত generic হবে না
+- শুধু আকর্ষণীয় শোনানোর জন্য তৈরি হবে না
+- source-এর কোনো একটি শব্দকে অযথা title বানানো হবে না
+- authorial direction-এর সঙ্গে অসঙ্গত হবে না
+- বইয়ের প্রকৃত content-এর চেয়ে বড় কোনো promise করবে না
+- বইয়ের genre ও intellectual character-এর সঙ্গে সামঞ্জস্যপূর্ণ হবে
+
+প্রয়োজনে সর্বোচ্চ 3টি viable Book Title option দিন।
+
+প্রতিটির ক্ষেত্রে সংক্ষেপে উল্লেখ করুন:
+
+- এটি কী প্রকাশ করছে
+- কোন core idea-এর উপর দাঁড়িয়ে আছে
+- কেন এটি বইটির জন্য উপযুক্ত
+
+তারপর একটি Recommended Title নির্বাচন করুন।
+
+==================================================
+2. BOOK SUBTITLE
+==================================================
+
+Subtitle-এর কাজ হবে Title-কে explain, focus বা qualify করা।
+
+Subtitle:
+
+- Title-এর পুনরাবৃত্তি করবে না
+- বইয়ের actual scope-এর বাইরে যাবে না
+- অতিরঞ্জিত promise করবে না
+- শুধু marketing slogan হবে না
+- বইয়ের central inquiry / transformation / subject matter-এর
+  প্রয়োজনীয় context দেবে
+
+প্রয়োজনে সর্বোচ্চ 3টি option দিন এবং একটি Recommended Subtitle নির্বাচন করুন।
+
+==================================================
+3. CHAPTER TITLES
+==================================================
+
+Step 6-এর প্রতিটি Chapter-এর জন্য Title তৈরি করুন।
+
+Chapter Title অবশ্যই Chapter-এর:
+
+- Core Topic
+- প্রধান intellectual movement
+- substantive discussion
+- reader-এর সেই পর্যায়ে অর্জন করা understanding
+
+থেকে উদ্ভূত হবে।
+
+Chapter Title:
+
+- chapter-এর প্রকৃত content-এর সঙ্গে সামঞ্জস্যপূর্ণ হবে
+- generic label হবে না
+- শুধু topic-এর নাম বসিয়ে দেওয়া হবে না, যদি content আরও নির্দিষ্ট
+  naming দাবি করে
+- অতিরিক্ত literary বা poetic হওয়ার জন্য meaning অস্পষ্ট করা যাবে না
+- পরবর্তী chapter-এর content আগেভাগে reveal করবে না
+- অন্য chapter-এর সঙ্গে অর্থগত overlap তৈরি করবে না
+
+প্রতিটি Chapter-এর জন্য:
+
+Chapter X
+Title:
+Purpose reflected by title:
+Why this title fits:
+
+দিয়ে দেখান।
+
+==================================================
+4. CHAPTER SUBTITLE
+==================================================
+
+Chapter Subtitle কেবল তখনই ব্যবহার করুন যখন Chapter Title একা
+chapter-এর intellectual scope যথেষ্ট স্পষ্ট করতে পারছে না।
+
+অপ্রয়োজনীয়ভাবে প্রতিটি Chapter-এ Subtitle দেবেন না।
+
+Subtitle ব্যবহার করলে সেটি:
+
+- Title-এর meaning পরিষ্কার করবে
+- chapter-এর specific scope নির্ধারণ করবে
+- Title-এর পুনরাবৃত্তি করবে না
+- নতুন substantive idea যোগ করবে না
+
+==================================================
+5. SECTION TITLES
+==================================================
+
+Step 6-এ নির্ধারিত প্রতিটি Section-এর জন্য Section Title তৈরি করুন।
+
+Section Title অবশ্যই সেই Section-এর actual content এবং structural job
+থেকে আসবে।
+
+বিশেষভাবে খেয়াল করুন:
+
+- Foundation
+- Concept Introduction
+- Clarification
+- Explanation
+- Proposition
+- Argument
+- Conceptual Distinction
+- Interpretation
+- Development
+- Consequence / Implication
+- Example / Analogy
+- Practical Application
+- Technique
+- Transition / Bridge
+- Conclusion
+
+—যে structural job রয়েছে, Title যেন তার সঙ্গে সামঞ্জস্যপূর্ণ হয়।
+
+Section Title শুধু “ভালো শোনায়” এমন হবে না;
+পাঠক Title দেখে বুঝতে পারবেন তিনি কী নিয়ে পড়তে যাচ্ছেন।
+
+==================================================
+6. SECTION SUBTITLE
+==================================================
+
+Section Subtitle কেবল তখনই দিন যখন:
+
+- Section Title যথেষ্ট specific নয়
+- Section-এর scope clarify করা প্রয়োজন
+- অথবা একটি substantive distinction স্পষ্ট করা প্রয়োজন
+
+যেখানে প্রয়োজন নেই সেখানে Subtitle দেবেন না।
+
+==================================================
+7. NAMING CONSISTENCY
+==================================================
+
+পুরো বইয়ের Title hierarchy পরীক্ষা করুন।
+
+নিশ্চিত করুন:
+
+Book Title
+↓
+Chapter Title
+↓
+Section Title
+
+—এই তিন স্তরে naming-এর মধ্যে logical hierarchy থাকে।
+
+একটি Section-এর Title যেন Chapter-এর মতো broad না হয়।
+
+একটি Chapter Title যেন Section-এর মতো narrow না হয়।
+
+একই ধরনের content unit-এর জন্য অকারণে একই ধরনের
+formulaic naming pattern ব্যবহার করবেন না।
+
+==================================================
+8. CONTENT-FIRST SAFETY CHECK
+==================================================
+
+Title তৈরি করার সময় নিচের কোনো কাজ করা যাবে না:
+
+- Title-এর সুবিধার জন্য content পরিবর্তন করা
+- Title-এর সঙ্গে মানাতে chapter/section merge করা
+- Title-এর জন্য নতুন concept invent করা
+- Author-এর proposition পরিবর্তন করা
+- Author-এর interpretation বদলে দেওয়া
+- Authorial content বাদ দেওয়া
+- Source-এর content-কে authorial position হিসেবে উপস্থাপন করা
+- Authorial position-কে source-এর position হিসেবে উপস্থাপন করা
+- শুধুমাত্র symmetry বজায় রাখার জন্য একই format-এর title তৈরি করা
+
+যদি কোনো Chapter বা Section-এর জন্য পরিষ্কার Title তৈরি করা কঠিন হয়,
+তাহলে ধরে নেবেন যে naming problem হতে পারে structural ambiguity-এর
+ইঙ্গিত।
+
+কিন্তু এই ধাপে structure পরিবর্তন করবেন না।
+
+শুধু বিষয়টি Flag করুন।
+
+==================================================
+9. TITLE QUALITY TEST
+==================================================
+
+প্রতিটি Title-এর জন্য পরীক্ষা করুন:
+
+1. এটি কি actual content-এর প্রতিনিধিত্ব করছে?
+2. এটি কি যথেষ্ট নির্দিষ্ট?
+3. এটি কি অপ্রয়োজনীয়ভাবে broad?
+4. এটি কি অন্য কোনো Chapter/Section-এর সঙ্গে overlap করছে?
+5. এটি কি পাঠককে ভুল expectation দিচ্ছে?
+6. এটি কি authorial direction-এর সঙ্গে সামঞ্জস্যপূর্ণ?
+7. এটি কি unnecessarily literary বা abstract?
+8. Title ছাড়া Subtitle সত্যিই প্রয়োজন কি না?
+9. Subtitle কি নতুন substantive claim তৈরি করছে?
+10. Title কি finalized structure-কে faithfully express করছে?
+
+==================================================
+10. SOURCE VS AUTHOR
+==================================================
+
+যদি কোনো Chapter বা Section মূলত:
+
+- Source-derived হয়
+- Author-derived হয়
+- অথবা Source + Author-এর synthesis হয়
+
+তাহলে Title এমনভাবে তৈরি করুন যাতে
+অজান্তে source-এর বক্তব্যকে author-এর নিজস্ব proposition
+হিসেবে বা author-এর proposition-কে source-এর বক্তব্য হিসেবে
+উপস্থাপন না করা হয়।
+
+==================================================
+11. OUTPUT FORMAT
+==================================================
+
+### A. RECOMMENDED BOOK TITLE
+
+Book Title:
+Book Subtitle:
+
+Brief Rationale:
+
+### B. ALTERNATIVE BOOK TITLES
+
+Option 1:
+Option 2:
+Option 3:
+
+শুধুমাত্র genuinely viable alternatives থাকলে দিন।
+
+### C. FINAL CHAPTER TITLE MAP
+
+| Chapter | Core Topic | Chapter Title | Subtitle | Why it fits |
+|---|---|---|---|---|
+
+### D. FINAL SECTION TITLE MAP
+
+| Chapter | Section | Structural Job | Section Title | Subtitle | Why it fits |
+|---|---|---|---|---|---|
+
+### E. NAMING HIERARCHY CHECK
+
+Book → Chapter → Section naming hierarchy পরীক্ষা করে
+কোথাও:
+
+- overlap
+- ambiguity
+- unnecessary repetition
+- excessive abstraction
+- scope mismatch
+
+আছে কি না দেখান।
+
+### F. STRUCTURAL NAMING FLAGS
+
+শুধুমাত্র যেখানে প্রয়োজন সেখানে Flag করুন:
+
+- Title ambiguity
+- Scope ambiguity
+- Possible structural ambiguity
+- Naming conflict
+- Insufficient content basis
+
+==================================================
+FINAL RULE
+==================================================
+
+এই ধাপে আপনার কাজ হলো:
+
+“Finalized structure-কে এমন নাম দেওয়া যাতে
+পাঠক কাঠামোটি স্বাভাবিকভাবে বুঝতে পারেন।”
+
+আপনার কাজ structure তৈরি করা নয়।
+আপনার কাজ content তৈরি করা নয়।
+আপনার কাজ author-এর intellectual direction নির্ধারণ করা নয়।
+
+Finalized content-driven structure অপরিবর্তিত থাকবে।
+
+Titles এবং Subtitles হবে সেই structure-এর
+সবচেয়ে স্বাভাবিক linguistic expression।
+
+শেষে নিজেকে জিজ্ঞাসা করুন:
+
+“আমি কি Title-এর জন্য content/structure বদলেছি,
+নাকি existing content-driven structure-এর জন্য যথাযথ Title তৈরি করেছি?”
+
+শুধুমাত্র দ্বিতীয়টি গ্রহণযোগ্য।</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 8 -->
+        <div class="prompt-card" id="p8">
+            <div class="prompt-header">
+                <div class="prompt-number">8</div>
+                <h2 class="prompt-title">Bengali Editorial Filter</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>আপলোড করা Source Content, Author Content এবং Steps 1–7-এর
+সম্পূর্ণ output ব্যবহার করুন।
+
+Step 7-এ তৈরি করা Book Title, Book Subtitle, Chapter Title,
+Chapter Subtitle, Section Title ও Section Subtitle-কে
+একজন অভিজ্ঞ বাংলা বই-সম্পাদক হিসেবে সম্পাদনা করুন।
+
+এই ধাপে নতুন structural architecture তৈরি করবেন না।
+Step 6-এ নির্ধারিত Final Chapter / Section Structure অপরিবর্তিত থাকবে।
+
+==================================================
+মূল উদ্দেশ্য
+==================================================
+
+Step 7-এর Title ও Subtitle-গুলিকে এমন একটি চূড়ান্ত রূপ দেওয়া
+যা:
+
+- স্বাভাবিক বাংলা ভাষায় লেখা
+- বাঙালি পাঠকের সাংস্কৃতিক ও ভাষাগত অনুভূতির সঙ্গে সামঞ্জস্যপূর্ণ
+- প্রকাশযোগ্য
+- শক্তিশালী
+- প্রাঞ্জল
+- স্বাভাবিক ছন্দযুক্ত
+- একই বইয়ের অন্তর্গত বলে মনে হয়
+- অতিরিক্ত অনুবাদধর্মী নয়
+- অপ্রয়োজনীয় ইংরেজি শব্দমুক্ত
+- বইটির প্রকৃত বিষয় ও বক্তব্যের প্রতি faithful
+
+শুধু ইংরেজি শব্দ বাদ দিয়ে বাংলা শব্দ বসানো এই কাজের উদ্দেশ্য নয়।
+
+প্রয়োজনে সম্পূর্ণ বাক্যগঠন, শব্দচয়ন, ছন্দ ও প্রকাশভঙ্গি পুনর্গঠন
+করতে পারেন—কিন্তু অর্থ ও content function পরিবর্তন করা যাবে না।
+
+==================================================
+CONTENT & DELIVERABLE LOCK — MANDATORY
+==================================================
+
+এই ধাপের সবচেয়ে গুরুত্বপূর্ণ নিয়ম:
+
+“Title বা Subtitle সম্পাদনা করতে গিয়ে কোনো Chapter বা Section-এর
+Deliverable পরিবর্তন করা যাবে না।”
+
+Deliverable বলতে বোঝাবে:
+
+- Chapter-এর মূল উদ্দেশ্য
+- Chapter-এর Core Topic
+- Chapter-এর প্রধান বক্তব্য
+- Chapter-এর Argument
+- Chapter-এর Explanation
+- Chapter-এর Conceptual Development
+- Chapter-এর Practical Content / Technique
+- Chapter শেষে পাঠকের যে নির্দিষ্ট understanding অর্জন করার কথা
+- Section-এর Structural Job
+
+Title বা Subtitle যদি এই Deliverable-এর সঙ্গে পুরোপুরি সামঞ্জস্যপূর্ণ
+না হয়, তাহলে Title/Subtitle সংশোধন করবেন।
+
+Deliverable-কে Title-এর সঙ্গে মানানোর জন্য পরিবর্তন করবেন না।
+
+==================================================
+1. TITLE MEANING LOCK
+==================================================
+
+প্রতিটি Title সম্পাদনার আগে Step 6–এর corresponding
+Chapter/Section-এর:
+
+- Core Topic
+- Purpose
+- Structural Job
+- Main Content
+- Intended Outcome
+
+পরীক্ষা করুন।
+
+তারপর Title সম্পাদনা করুন।
+
+Title-এর অর্থ যেন Chapter/Section-এর actual content-এর চেয়ে:
+
+- বেশি বিস্তৃত না হয়
+- বেশি সংকীর্ণ না হয়
+- ভিন্ন direction না দেয়
+- নতুন promise না তৈরি করে
+
+==================================================
+2. BENGALI LANGUAGE FILTER
+==================================================
+
+প্রতিটি Title ও Subtitle পরীক্ষা করুন:
+
+- অপ্রয়োজনীয় English word আছে কি?
+- সরাসরি English থেকে অনুবাদ করা মনে হচ্ছে কি?
+- Bengali বাক্যগঠন অস্বাভাবিক কি?
+- পশ্চিমবঙ্গের বাংলা ব্যবহারের সঙ্গে সামঞ্জস্য আছে কি?
+- শব্দটি বাংলা বইয়ের ভাষায় স্বাভাবিক কি?
+- ভাষা অতিরিক্ত ভারী বা কৃত্রিম কি?
+- ভাষা অতিরিক্ত কথ্য হয়ে গেছে কি?
+- ছন্দ ভেঙে যাচ্ছে কি?
+- একই ধরনের Title-এর ভাষাভঙ্গি আলাদা হয়ে যাচ্ছে কি?
+
+অপ্রয়োজনীয় English terminology বাদ দিন।
+
+তবে কোনো English term যদি subject-এর established
+technical terminology হিসেবে প্রয়োজনীয় হয়, শুধুমাত্র
+বাংলা করার জন্য তা পরিবর্তন করবেন না।
+
+==================================================
+3. CULTURAL & LINGUISTIC NATURALNESS
+==================================================
+
+Title ও Subtitle যেন বাংলা ভাষায় এমনভাবে লেখা হয়,
+যেন একজন দক্ষ বাঙালি লেখক স্বাভাবিকভাবে এগুলি লিখেছেন।
+
+শুধু “সঠিক বাংলা” যথেষ্ট নয়।
+
+পরীক্ষা করুন:
+
+- এটি কি বাঙালি পাঠকের কাছে স্বাভাবিক শোনে?
+- শব্দের নির্বাচন কি বাংলা বইয়ের প্রচলিত intellectual tone-এর সঙ্গে যায়?
+- Title কি অনুবাদ করা বাক্যের মতো শোনাচ্ছে?
+- প্রয়োজনের তুলনায় বেশি বিদেশি বা corporate expression ঢুকে গেছে কি?
+- Title কি অকারণে আধুনিক jargon ব্যবহার করছে?
+
+==================================================
+4. RHYTHM & TONE
+==================================================
+
+Book → Chapter → Section স্তরগুলির মধ্যে ভাষার tone সামঞ্জস্যপূর্ণ রাখুন।
+
+কিন্তু সব Title-কে একই বাক্য-ছাঁচে ফেলবেন না।
+
+যেখানে প্রয়োজন:
+
+- সংক্ষিপ্ত Title
+- ভাবনামূলক Title
+- ধারণাভিত্তিক Title
+- প্রশ্নধর্মী Title
+- বক্তব্যধর্মী Title
+
+ব্যবহার করা যেতে পারে।
+
+তবে variation যেন উদ্দেশ্যহীন না হয়।
+
+==================================================
+5. SUBTITLE EDITING
+==================================================
+
+প্রতিটি Subtitle এক লাইনে:
+
+- মূল বক্তব্য স্পষ্ট করবে
+- Title-এর অর্থ সম্পূর্ণ করবে
+- Chapter/Section-এর actual scope প্রকাশ করবে
+- প্রাঞ্জল বাংলা হবে
+- অতিরিক্ত ব্যাখ্যামূলক হবে না
+- Title-এর পুনরাবৃত্তি করবে না
+
+যেখানে Subtitle প্রয়োজন নেই, সেখানে জোর করে Subtitle তৈরি করবেন না।
+
+==================================================
+6. TITLE–DELIVERABLE CONSISTENCY CHECK
+==================================================
+
+প্রতিটি Chapter-এর ক্ষেত্রে পরীক্ষা করুন:
+
+Title:
+Subtitle:
+Chapter Deliverable:
+
+তারপর নির্ধারণ করুন:
+
+✓ Fully aligned
+অথবা
+⚠ Title may misrepresent deliverable
+
+যদি ⚠ হয়, Title/Subtitle সংশোধন করুন।
+
+Deliverable পরিবর্তন করা যাবে না।
+
+==================================================
+7. FINAL TITLE LIST
+==================================================
+
+প্রথমে একটি edited final list দিন।
+
+### BOOK
+
+Book Title:
+Book Subtitle:
+
+### CHAPTERS
+
+Chapter 1:
+Title:
+Subtitle:
+
+Chapter 2:
+Title:
+Subtitle:
+
+...
+
+### SECTIONS
+
+Chapter 1
+Section 1:
+Title:
+Subtitle:
+
+...
+
+==================================================
+8. BEFORE → AFTER CHANGE LOG
+==================================================
+
+শুধুমাত্র যেসব Title/Subtitle-এ substantive editorial change
+করেছেন সেগুলির ক্ষেত্রে:
+
+Original:
+Final:
+Reason:
+
+Reason-এর মধ্যে প্রয়োজন হলে উল্লেখ করুন:
+
+- ভাষা
+- English শব্দ
+- অনুবাদধর্মী ভাব
+- সাংস্কৃতিক naturalness
+- ছন্দ
+- scope clarity
+- tone consistency
+- deliverable alignment
+
+==================================================
+9. FINAL INTEGRITY CHECK
+==================================================
+
+সবশেষে পরীক্ষা করুন:
+
+1. কোনো Chapter-এর Deliverable বদলেছে কি?
+2. কোনো Section-এর Structural Job বদলেছে কি?
+3. কোনো Core Topic বদলেছে কি?
+4. কোনো Authorial Proposition-এর অর্থ বদলেছে কি?
+5. কোনো নতুন substantive idea Title/Subtitle-এর মাধ্যমে ঢুকে গেছে কি?
+6. কোনো existing content Title-এর সঙ্গে মানাতে পরিবর্তিত হয়েছে কি?
+7. কোনো Title actual content-এর চেয়ে বড় promise করছে কি?
+8. অপ্রয়োজনীয় English শব্দ রয়ে গেছে কি?
+9. ভাষা কি স্বাভাবিক পশ্চিমবঙ্গের বাংলা?
+10. পুরো বইয়ের naming কি একটি coherent linguistic voice তৈরি করছে?
+
+যদি কোনো Title content-এর সঙ্গে সামঞ্জস্যপূর্ণ না হয়,
+Title পরিবর্তন করুন—content নয়।
+
+==================================================
+FINAL RULE
+==================================================
+
+এই ধাপে:
+
+TITLE CHANGE করা যাবে।
+SUBTITLE CHANGE করা যাবে।
+LANGUAGE CHANGE করা যাবে।
+RHYTHM CHANGE করা যাবে।
+TONE CHANGE করা যাবে।
+
+কিন্তু:
+
+CONTENT CHANGE করা যাবে না।
+DELIVERABLE CHANGE করা যাবে না।
+STRUCTURE CHANGE করা যাবে না।
+CORE TOPIC CHANGE করা যাবে না।
+AUTHORIAL INTELLECTUAL DIRECTION CHANGE করা যাবে না।
+
+মূল নীতি:
+
+“নামকে কনটেন্টের সঙ্গে মানাতে হবে;
+কনটেন্টকে নামের সঙ্গে মানাতে হবে না।”</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 9 -->
+        <div class="prompt-card" id="p9">
+            <div class="prompt-header">
+                <div class="prompt-number">9</div>
+                <h2 class="prompt-title">Final Book Outline Construction</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>আপলোড করা Source Content, Author Content এবং Steps 1–8-এর
+সম্পূর্ণ output ব্যবহার করুন।
+
+বিশেষভাবে:
+
+- Step 6 = FINAL CHAPTER / SECTION STRUCTURE
+- Step 8 = FINAL EDITED BOOK / CHAPTER / SECTION TITLES & SUBTITLES
+
+এই দুইটিকে এই ধাপের প্রধান structural authority হিসেবে গ্রহণ করুন।
+
+এই ধাপে আপনার কাজ হলো Step 6-এর finalized structure-কে
+Step 8-এর finalized Bengali Title ও Subtitle ব্যবহার করে
+একটি সম্পূর্ণ, পরিষ্কার, navigable এবং publication-ready
+FINAL BOOK OUTLINE হিসেবে পুনর্গঠন করা।
+
+==================================================
+CORE PRINCIPLE
+==================================================
+
+“Final Outline is a faithful representation of the finalized
+content-driven structure.”
+
+এটি নতুন করে structure তৈরির ধাপ নয়।
+
+Step 6-এ structure যে কারণে এবং যে logic-এ তৈরি হয়েছে,
+সেই logic অক্ষুণ্ণ থাকবে।
+
+Step 8-এ Title ও Subtitle যে কারণে নির্ধারিত হয়েছে,
+সেগুলিও অক্ষুণ্ণ থাকবে।
+
+==================================================
+1. DELIVERABLE LOCK — ABSOLUTE RULE
+==================================================
+
+Outline পুনর্গঠনের সময় কোনো Chapter বা Section-এর Deliverable
+পরিবর্তন করা যাবে না।
+
+প্রতিটি Chapter-এর:
+
+- Core Topic
+- Purpose
+- Main Argument
+- Main Explanation
+- Conceptual Development
+- Authorial Proposition
+- Practical Content / Technique
+- Intended Reader Understanding
+- Structural Job
+
+Step 6 অনুযায়ী অপরিবর্তিত থাকবে।
+
+Title বা Subtitle-এর সঙ্গে কোনো Deliverable-এর mismatch দেখা গেলে
+Deliverable পরিবর্তন করবেন না।
+
+প্রয়োজনে Step 8-এর Title/Subtitle-ই সংশোধনের প্রয়োজনীয়তা
+Flag করুন।
+
+==================================================
+2. STRUCTURE LOCK
+==================================================
+
+Step 6-এর:
+
+- Chapter সংখ্যা
+- Chapter order
+- Section order
+- Section hierarchy
+- Structural boundaries
+- Content placement
+
+অপরিবর্তিত থাকবে।
+
+এই ধাপে:
+
+- Chapter merge করা যাবে না
+- Chapter split করা যাবে না
+- Section merge করা যাবে না
+- Section split করা যাবে না
+- Chapter reorder করা যাবে না
+- Section reorder করা যাবে না
+
+যদি কোনো structural problem দেখতে পান,
+সেটি সংশোধন না করে “Structural Flag” হিসেবে উল্লেখ করুন।
+
+==================================================
+3. TITLE LOCK
+==================================================
+
+Step 8-এর Final Book Title, Book Subtitle, Chapter Title,
+Chapter Subtitle, Section Title এবং Section Subtitle
+হুবহু ব্যবহার করুন।
+
+নিজে থেকে নতুন Title তৈরি করবেন না।
+
+Step 8-এর কোনো Title/Subtitle-এর ভাষা পরিবর্তন করবেন না,
+যদি না Step 8-এর output-এ তা explicitly unresolved/alternative
+হিসেবে দেওয়া থাকে।
+
+==================================================
+4. CONTENT SCOPE LOCK
+==================================================
+
+প্রতিটি Chapter ও Section-এর outline description তৈরি করার সময়
+শুধুমাত্র Step 1–8-এ ইতিমধ্যে শনাক্ত ও নির্ধারিত content ব্যবহার করুন।
+
+Outline-এ:
+
+- নতুন substantive idea যোগ করা যাবে না
+- নতুন argument তৈরি করা যাবে না
+- Author-এর মতামত অনুমান করা যাবে না
+- Source-এর বক্তব্যকে Author-এর বক্তব্য হিসেবে লেখা যাবে না
+- Author-এর বক্তব্যকে Source-এর বক্তব্য হিসেবে লেখা যাবে না
+- কোনো existing content বাদ দেওয়া যাবে না
+
+Outline-এর কাজ হবে existing content-এর structural placement
+স্পষ্ট করা।
+
+==================================================
+5. CHAPTER DELIVERABLE VISIBILITY
+==================================================
+
+প্রতিটি Chapter-এর ক্ষেত্রে পাঠকের কাছে স্পষ্ট হতে হবে:
+
+“এই Chapter কেন আছে এবং Chapter শেষে পাঠক কী বুঝবেন,
+জানবেন বা অর্জন করবেন।”
+
+তবে এটি নতুন deliverable তৈরি করে নয়।
+
+Step 6-এর existing intended outcome-কে সংক্ষিপ্ত ও পরিষ্কারভাবে
+প্রকাশ করুন।
+
+==================================================
+6. SECTION FUNCTION VISIBILITY
+==================================================
+
+প্রতিটি Section-এর ক্ষেত্রে স্পষ্ট করুন:
+
+- Section-এর Core Topic
+- Section-এর Structural Job
+- কী আলোচনা হবে
+- এটি Chapter-এর বৃহত্তর উদ্দেশ্যে কী ভূমিকা পালন করবে
+
+Structural Job Step 4–6 থেকে গ্রহণ করুন।
+
+==================================================
+7. AUTHORIAL CONTENT VISIBILITY
+==================================================
+
+যেসব Chapter/Section-এ substantive Authorial Content রয়েছে,
+outline-এ তা স্পষ্টভাবে দৃশ্যমান রাখুন।
+
+বিশেষ করে:
+
+- Authorial Proposition
+- Opinion
+- Interpretation
+- Metaphysical Claim
+- Original Explanation
+- Conceptual Distinction
+- Argument
+- Practical Technique
+- Important Example / Analogy
+- Intended Conclusion
+
+এসবকে শুধু “supporting content” হিসেবে অস্পষ্ট করে ফেলবেন না।
+
+যেখানে প্রয়োজন সেখানে উল্লেখ করুন:
+
+“Authorial Core Content”
+
+অথবা
+
+“Authorial Contribution”
+
+==================================================
+8. SOURCE CONTENT VISIBILITY
+==================================================
+
+Source Content যেখানে substantive ভূমিকা রাখছে,
+সেটিও outline-এ যথাযথভাবে চিহ্নিত করুন।
+
+প্রয়োজনে উল্লেখ করুন:
+
+- Source Foundation
+- Source Concept
+- Source Explanation
+- Source Practice
+- Source Support
+
+Source ও Author Content-এর relationship যেন অস্পষ্ট না হয়।
+
+==================================================
+9. NATURAL READING FLOW
+==================================================
+
+Final outline এমনভাবে লিখুন যাতে শুধু Chapter-এর তালিকা না হয়ে
+পাঠকের conceptual journey-টিও বোঝা যায়।
+
+প্রতিটি Chapter-এর শেষে সংক্ষেপে দেখান:
+
+“এখান থেকে পরের Chapter-এ যাওয়ার স্বাভাবিক কারণ কী?”
+
+তবে এখানে পূর্ণ Bridge লিখবেন না।
+
+পূর্ণ Chapter-to-Chapter Bridge Step 10-এ তৈরি হবে।
+
+এখানে শুধু logical progression-এর indication থাকবে।
+
+==================================================
+10. INTRODUCTION / CONCEPT INTRODUCTION
+==================================================
+
+Step 3–6 অনুযায়ী কোনো নতুন বা unfamiliar concept যদি:
+
+- Inline introduction
+- Focused explanation
+- Dedicated Section
+- Chapter-level treatment
+
+হিসেবে নির্ধারিত হয়ে থাকে,
+সেই placement অক্ষুণ্ণ রাখুন।
+
+শুধুমাত্র Title বা outline-এর সৌন্দর্যের জন্য
+কোনো concept অন্য জায়গায় সরাবেন না।
+
+==================================================
+11. FINAL OUTLINE FORMAT
+==================================================
+
+নিচের format ব্যবহার করুন।
+
+# BOOK TITLE
+
+## Subtitle
+
+### BOOK PURPOSE
+
+বইটির overall purpose-এর সংক্ষিপ্ত প্রকাশ।
+
+---
+
+# CHAPTER 1 — [Final Chapter Title]
+
+### [Final Chapter Subtitle — যদি থাকে]
+
+**Chapter Purpose:**  
+Step 6 অনুযায়ী এই Chapter-এর purpose।
+
+**Core Topic:**  
+মূল বিষয়।
+
+**Chapter Deliverable:**  
+Chapter শেষে পাঠকের intended understanding / outcome।
+
+### Section 1 — [Final Section Title]
+
+**Subtitle:**  
+[যদি থাকে]
+
+**Structural Job:**  
+Section-এর ভূমিকা।
+
+**Core Content:**  
+কী আলোচনা হবে।
+
+**Authorial Content:**  
+যদি থাকে।
+
+**Source Content:**  
+যদি থাকে।
+
+**Key Argument / Explanation:**  
+যদি থাকে।
+
+### Section 2 — [Final Section Title]
+
+একই format।
+
+**Chapter Progression:**  
+এই Chapter কীভাবে পরবর্তী Chapter-এর জন্য প্রয়োজনীয়
+understanding তৈরি করছে।
+
+---
+
+# CHAPTER 2 — [Final Chapter Title]
+
+একই format।
+
+...
+
+==================================================
+12. OUTLINE COMPLETENESS CHECK
+==================================================
+
+Final Outline তৈরি হওয়ার পরে পরীক্ষা করুন:
+
+### Structure
+
+- Step 6-এর সব Chapter আছে কি?
+- Chapter order অপরিবর্তিত আছে কি?
+- সব Section আছে কি?
+- কোনো Section বাদ গেছে কি?
+- কোনো নতুন Section ঢুকেছে কি?
+
+### Titles
+
+- Step 8-এর Final Titles ব্যবহার করা হয়েছে কি?
+- English শব্দ বা পুরনো Title ভুল করে ফিরে এসেছে কি?
+- Title hierarchy ঠিক আছে কি?
+
+### Deliverables
+
+- কোনো Chapter-এর Deliverable বদলেছে কি?
+- কোনো Section-এর Structural Job বদলেছে কি?
+- কোনো Chapter-এর scope পরিবর্তিত হয়েছে কি?
+
+### Content
+
+- Authorial Content সম্পূর্ণভাবে visible আছে কি?
+- Source Content যথাযথ জায়গায় আছে কি?
+- কোনো substantive content outline-এর সময় হারিয়ে গেছে কি?
+- নতুন substantive content ঢুকে গেছে কি?
+
+### Dependency
+
+- Conceptual dependency অক্ষুণ্ণ আছে কি?
+- Foundational concept যথাযথ জায়গায় আছে কি?
+- Prerequisite concept অযথা আলাদা করা হয়নি তো?
+- Natural conceptual progression অক্ষুণ্ণ আছে কি?
+
+==================================================
+13. DELIVERABLE DRIFT CHECK — MANDATORY
+==================================================
+
+প্রতিটি Chapter-এর জন্য Step 6-এর Deliverable এবং
+Final Outline-এর Deliverable পাশাপাশি পরীক্ষা করুন।
+
+| Chapter | Step 6 Deliverable | Final Outline Deliverable | Status |
+|---|---|---|---|
+
+Status হবে:
+
+✓ Unchanged
+
+অথবা
+
+⚠ Possible Drift
+
+যদি “Possible Drift” হয়, তাহলে Final Outline-কে Step 6-এর
+Deliverable অনুযায়ী সংশোধন করুন।
+
+==================================================
+14. STRUCTURAL INTEGRITY CHECK
+==================================================
+
+সবশেষে একটি সংক্ষিপ্ত Structural Integrity Report দিন:
+
+- Structure preserved: Yes / No
+- Titles preserved: Yes / No
+- Deliverables preserved: Yes / No
+- Authorial Content preserved: Yes / No
+- Source Content placement preserved: Yes / No
+- Conceptual Dependency preserved: Yes / No
+- New substantive content introduced: Yes / No
+
+যদি কোনো জায়গায় “No” হয়, তা চিহ্নিত করুন এবং
+সংশোধিত Final Outline দিন।
+
+==================================================
+ABSOLUTE FINAL RULE
+==================================================
+
+এই ধাপে:
+
+STRUCTURE তৈরি করবেন না।
+STRUCTURE পরিবর্তন করবেন না।
+DELIVERABLE পরিবর্তন করবেন না।
+CORE TOPIC পরিবর্তন করবেন না।
+CONTENT পরিবর্তন করবেন না।
+AUTHORIAL DIRECTION পরিবর্তন করবেন না।
+
+শুধু:
+
+Step 6-এর finalized structure
++
+Step 8-এর finalized Bengali naming
+
+একত্র করে একটি সম্পূর্ণ FINAL BOOK OUTLINE তৈরি করবেন।
+
+মূল নীতি:
+
+“Outline content-কে ধারণ করবে;
+content outline-কে পূরণ করার জন্য বদলাবে না।”
+
+নিজেকে শেষে জিজ্ঞাসা করুন:
+
+“আমি কি একটি নতুন outline তৈরি করেছি,
+নাকি ইতিমধ্যে নির্ধারিত content-driven structure-কে
+নির্ভুলভাবে final outline হিসেবে প্রকাশ করেছি?”
+
+শুধুমাত্র দ্বিতীয়টি গ্রহণযোগ্য।</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 10 -->
+        <div class="prompt-card" id="p10">
+            <div class="prompt-header">
+                <div class="prompt-number">10</div>
+                <h2 class="prompt-title">Writer's Reference Map</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>আপলোড করা Source Content, Author Content এবং Steps 1–9-এর
+সম্পূর্ণ output ব্যবহার করুন।
+
+বিশেষভাবে Step 9-এর FINAL BOOK OUTLINE-কে structural authority
+হিসেবে গ্রহণ করুন।
+
+এই ধাপে আপনার কাজ হলো Manuscript Drafting-এর জন্য একটি
+Writer’s Reference Map / Ready Reckoner তৈরি করা।
+
+এই Reference Map-এর উদ্দেশ্য:
+
+“লেখক যেন প্রতিটি Chapter / Section লিখতে বসার আগে
+সেই অংশটির কাজ, বিষয়বস্তু, dependency এবং সম্ভাব্য
+প্রকাশভঙ্গি এক নজরে বুঝতে পারেন।”
+
+==================================================
+CORE PRINCIPLE
+==================================================
+
+এই Reference Map manuscript-এর বিকল্প নয়।
+
+এটি লেখককে কী লিখতে হবে তার structural এবং content guidance দেবে,
+কিন্তু লেখকের হয়ে manuscript লিখবে না।
+
+Structure serves content.
+
+অতএব:
+
+- Final Outline-এর বাইরে নতুন Chapter/Section তৈরি করা যাবে না
+- কোনো Chapter/Section merge বা split করা যাবে না
+- Core Topic পরিবর্তন করা যাবে না
+- Chapter/Section Deliverable পরিবর্তন করা যাবে না
+- Authorial Content বাদ দেওয়া যাবে না
+- নতুন substantive idea invent করা যাবে না
+- লেখককে কোনো predetermined argument বা opinion গ্রহণ করতে বাধ্য
+  করা যাবে না
+
+==================================================
+1. FINAL STRUCTURE INVENTORY
+==================================================
+
+Step 9-এর Final Outline পরীক্ষা করে নির্ধারণ করুন:
+
+- মোট কতটি Chapter
+- মোট কতটি Section
+- প্রতিটি Chapter-এর অধীনে কোন কোন Section
+
+এরপর প্রতিটি Chapter/Section-কে একটি স্বতন্ত্র Content Unit
+হিসেবে বিবেচনা করুন।
+
+==================================================
+2. FOUR-COLUMN WRITER'S REFERENCE TABLE
+==================================================
+
+নিচের চারটি কলামে সম্পূর্ণ টেবিল তৈরি করুন:
+
+| Section-এর Name | Section-এর ধরন | Section-এর Core Topic | Section-এ ব্যবহারের জন্য Content Guidance |
+|---|---|---|---|
+
+### Column 1 — Section-এর Name
+
+Step 9-এর Final Title/Section Title হুবহু ব্যবহার করুন।
+
+### Column 2 — Section-এর ধরন
+
+Step 4–6-এর Structural Job এবং Step 9-এর structure অনুযায়ী
+Section-এর ধরন নির্ধারণ করুন।
+
+যেমন:
+
+- Foundation
+- Concept Introduction
+- Clarification
+- Explanation
+- Proposition
+- Argument
+- Conceptual Distinction
+- Interpretation
+- Development / Expansion
+- Consequence / Implication
+- Example / Analogy
+- Practical Application
+- Technique
+- Transition / Bridge
+- Conclusion
+
+প্রয়োজনে একাধিক ধরন থাকতে পারে।
+
+### Column 3 — Section-এর Core Topic
+
+Step 2–4-এর Core Topic analysis অনুসরণ করে বলুন:
+
+- এই Section-এর প্রধান Core Topic কী
+- তার সঙ্গে যুক্ত প্রধান Core Topic কী কী
+
+Core Topic-এর hierarchy যেন অযথা বিস্তৃত না হয়।
+
+### Column 4 — Section-এ ব্যবহারের জন্য Content Guidance
+
+এটি কোনো rigid writing template নয়।
+
+বরং লেখককে জানাবে:
+
+- এই Section-এ মূলত কী ধরনের কথা বলতে হবে
+- কোন ধারণা / proposition / explanation এখানে প্রকাশ পাবে
+- কোন content আগে প্রয়োজন
+- কোন distinction বা clarification গুরুত্বপূর্ণ
+- কোথায় Authorial Content-এর জায়গা রয়েছে
+- কোথায় Source Content ব্যবহার হবে
+- প্রয়োজন হলে কী ধরনের example / analogy / practical
+  explanation উপযুক্ত হতে পারে
+
+শুধু existing content-এর ভিত্তিতে guidance তৈরি করুন।
+
+নতুন substantive content তৈরি করবেন না।
+
+==================================================
+3. AUTHORIAL CONTENT VISIBILITY
+==================================================
+
+প্রতিটি Section-এ পরীক্ষা করুন Authorial Content-এর কী ভূমিকা আছে।
+
+বিশেষভাবে চিহ্নিত করুন:
+
+- Authorial Proposition
+- Authorial Argument
+- Authorial Interpretation
+- Authorial Explanation
+- Metaphysical Claim
+- Conceptual Distinction
+- Practical Technique
+- Example / Analogy
+- Conclusion
+
+যেখানে Authorial Content substantive, সেখানে Content Guidance-এ
+তার জন্য যথেষ্ট জায়গা দৃশ্যমান রাখুন।
+
+==================================================
+4. SOURCE CONTENT VISIBILITY
+==================================================
+
+যেখানে Source Content ব্যবহার হবে সেখানে চিহ্নিত করুন:
+
+- Source Foundation
+- Source Concept
+- Source Explanation
+- Source Practice
+- Source Support
+
+Source এবং Author-এর বক্তব্যের সীমারেখা বজায় রাখুন।
+
+==================================================
+5. WRITER'S CONTENT PRIORITY
+==================================================
+
+প্রতিটি Section-এর Content Guidance-এ প্রয়োজন অনুযায়ী
+content-এর priority বোঝান:
+
+### Essential
+Section-এর মূল উদ্দেশ্য পূরণের জন্য অপরিহার্য।
+
+### Important
+Section-এর depth বা understanding-এর জন্য গুরুত্বপূর্ণ।
+
+### Supporting
+প্রয়োজন অনুযায়ী ব্যবহারযোগ্য supporting material।
+
+এটি content বাদ দেওয়ার নির্দেশ নয়।
+
+==================================================
+6. SECTION-TO-SECTION DEPENDENCY
+==================================================
+
+এবার পুরো Reference Table-এর Section-গুলোকে
+conceptual dependency অনুযায়ী পরীক্ষা করুন।
+
+প্রতিটি Section-এর জন্য নির্ধারণ করুন:
+
+- কোন Section আগে প্রয়োজন?
+- এই Section কোন Section-এর উপর নির্ভরশীল?
+- পরবর্তী কোন Section এই Section-এর উপর নির্ভরশীল?
+- কেন এই dependency রয়েছে?
+
+শুধু Chapter order অনুসরণ করে dependency তৈরি করবেন না।
+
+যদি একটি Section অন্য Section-এর উপর conceptually নির্ভরশীল হয়,
+সেটি স্পষ্টভাবে দেখান।
+
+==================================================
+7. DEPENDENCY BULLET LIST
+==================================================
+
+টেবিলের পরে Section-গুলোকে dependency অনুযায়ী
+একটি পরিষ্কার bullet list-এ সাজান।
+
+Format:
+
+- **[Section Name]**
+  - আগে প্রয়োজন: [Section Name / নেই]
+  - এর উপর নির্ভরশীল: [Section Name / নামগুলি]
+  - কেন: [সংক্ষিপ্ত কারণ]
+
+যদি কোনো Section foundational হয়:
+
+- **[Section Name]**
+  - আগে প্রয়োজন: নেই / [যা প্রয়োজন]
+  - এর উপর নির্ভরশীল: [Section-গুলি]
+  - কেন: [কী foundation তৈরি করে]
+
+==================================================
+8. WRITING SEQUENCE VS DEPENDENCY SEQUENCE
+==================================================
+
+বিশেষভাবে পরীক্ষা করুন:
+
+Final Outline-এর reading order এবং conceptual dependency order
+একই কি না।
+
+যদি একই না হয়:
+
+- Final Outline পরিবর্তন করবেন না
+- পার্থক্যটি Flag করুন
+- লেখককে Manuscript Drafting-এর সময় কোন dependency মাথায়
+  রাখতে হবে তা উল্লেখ করুন
+
+==================================================
+9. WRITER'S QUICK REFERENCE
+==================================================
+
+সবশেষে একটি সংক্ষিপ্ত Ready Reckoner দিন:
+
+| Section | কী নিয়ে লিখব? | সবচেয়ে গুরুত্বপূর্ণ Content | আগে কী বুঝতে হবে? | পরে কী তৈরি হবে? |
+|---|---|---|---|---|
+
+এটি অত্যন্ত সংক্ষিপ্ত রাখুন।
+
+এর উদ্দেশ্য হলো Manuscript লেখার সময় লেখক যেন
+পুরো Workflow পুনরায় না পড়ে শুধু এই টেবিল দেখে
+প্রতিটি Section-এর অবস্থান ও কাজ বুঝতে পারেন।
+
+==================================================
+10. FINAL INTEGRITY CHECK
+==================================================
+
+পরীক্ষা করুন:
+
+1. Step 9-এর সব Chapter/Section অন্তর্ভুক্ত হয়েছে কি?
+2. কোনো Chapter/Section বাদ গেছে কি?
+3. কোনো নতুন Chapter/Section তৈরি হয়েছে কি?
+4. Core Topic অপরিবর্তিত আছে কি?
+5. Deliverable অপরিবর্তিত আছে কি?
+6. Authorial Content-এর জায়গা অক্ষুণ্ণ আছে কি?
+7. Source Content যথাযথভাবে চিহ্নিত হয়েছে কি?
+8. Content Guidance কি rigid template হয়ে গেছে?
+9. নতুন substantive idea কি ভুল করে যোগ হয়েছে?
+10. Dependency কি প্রকৃত conceptual dependency-এর ভিত্তিতে তৈরি?
+11. Final Outline-এর reading sequence কি অক্ষুণ্ণ আছে?
+
+==================================================
+ABSOLUTE FINAL RULE
+==================================================
+
+এই ধাপে:
+
+আপনি লেখকের জন্য Manuscript লিখবেন না।
+
+আপনি লেখককে একটি predetermined template-এর মধ্যে
+content ভরতে বাধ্য করবেন না।
+
+আপনার কাজ হলো:
+
+FINAL OUTLINE
+→ CONTENT FUNCTION
+→ CORE TOPIC
+→ AUTHORIAL CONTENT
+→ SOURCE CONTENT
+→ DEPENDENCY
+→ WRITING GUIDANCE
+
+—এই তথ্যগুলোকে একটি ব্যবহারযোগ্য Writer's Ready Reckoner-এ
+রূপান্তর করা।
+
+মূল নীতি:
+
+“Reference Map লেখককে পথ দেখাবে;
+লেখকের হয়ে পথ চলবে না।”</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 11 -->
+        <div class="prompt-card" id="p11">
+            <div class="prompt-header">
+                <div class="prompt-number">11</div>
+                <h2 class="prompt-title">Writing Blueprint</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>আপলোড করা Source Content, Author Content এবং Steps 1–10-এর
+প্রাসঙ্গিক সম্পূর্ণ output ব্যবহার করুন।
+
+আমি এখন একটি নির্দিষ্ট Chapter অথবা Section-এর Manuscript
+লিখতে শুরু করতে চাই।
+
+নিচে যে Chapter / Section-এর নাম দেওয়া হবে, শুধুমাত্র
+সেই Chapter / Section-এর জন্য একটি DUMMY WRITING TEMPLATE /
+WRITING BLUEPRINT তৈরি করুন।
+
+==================================================
+CORE PURPOSE
+==================================================
+
+এই Blueprint-এর উদ্দেশ্য হলো Manuscript লেখার আগে লেখককে
+একটি primary writing guide দেওয়া।
+
+এটি দেখাবে:
+
+- কোথা থেকে আলোচনা শুরু করা যেতে পারে
+- কোন প্রসঙ্গে কোন content আসবে
+- কোন point-এর পরে কোন point আসবে
+- কোথায় concept introduce করা দরকার
+- কোথায় explanation প্রয়োজন
+- কোথায় definition দরকার
+- কোথায় description প্রয়োজন
+- কোথায় example / analogy / story ব্যবহার করা যেতে পারে
+- কোথায় question বা hook ব্যবহার করা যেতে পারে
+- কোথায় transition statement প্রয়োজন
+- কোথায় clarification দরকার
+- কোথায় reflection বা implication আনা যেতে পারে
+- কোথায় practical application / technique আসবে
+- এবং প্রতিটি element কেন ব্যবহার করা হবে
+- পাঠকের কোন understanding তৈরি করার জন্য সেটি প্রয়োজন
+
+কিন্তু এই Blueprint কখনও পূর্ণ Manuscript লিখবে না।
+
+==================================================
+ABSOLUTE CONTENT-FIRST RULE
+==================================================
+
+Blueprint অবশ্যই Step 10-এর Writer's Reference Map এবং
+Steps 1–9-এর finalized structure-এর অধীন থাকবে।
+
+Structure serves content.
+
+অতএব:
+
+- Blueprint-এর জন্য content পরিবর্তন করা যাবে না
+- Blueprint-এর জন্য নতুন substantive idea তৈরি করা যাবে না
+- Author-এর opinion invent করা যাবে না
+- Authorial proposition পরিবর্তন করা যাবে না
+- Source-এর বক্তব্যকে Author-এর বক্তব্য হিসেবে উপস্থাপন করা যাবে না
+- Author-এর বক্তব্যকে Source-এর বক্তব্য হিসেবে উপস্থাপন করা যাবে না
+- Chapter/Section-এর Core Topic পরিবর্তন করা যাবে না
+- Chapter/Section Deliverable পরিবর্তন করা যাবে না
+- Final Outline-এর sequence পরিবর্তন করা যাবে না
+
+যদি existing content-এর জন্য বর্তমান structure যথেষ্ট না হয়,
+সেটি Flag করুন; নিজের মতো করে structure পরিবর্তন করবেন না।
+
+==================================================
+WRITING BLUEPRINT ≠ MANUSCRIPT
+==================================================
+
+এই Blueprint-এ:
+
+পূর্ণ paragraph লিখবেন না।
+
+পূর্ণ argument লিখবেন না।
+
+পূর্ণ explanation লিখবেন না।
+
+কোনও অংশকে polished prose-এ লিখবেন না।
+
+শুধু লেখককে নির্দেশ করার মতো সংক্ষিপ্ত structural/content cues দিন।
+
+উদাহরণ:
+
+❌ ভুল:
+“মানুষ যখন নিজের চিন্তাকে স্থির করতে শেখে, তখন...”
+
+✓ সঠিক:
+“স্থির মন কেন প্রয়োজন—এখানে মূল কারণটি ব্যাখ্যা করুন।”
+
+অর্থাৎ Blueprint বলবে:
+
+WHAT TO WRITE
+HOW TO APPROACH IT
+WHY IT IS THERE
+WHAT THE READER SHOULD UNDERSTAND
+
+কিন্তু WHAT TO WRITE IN FULL PROSE করবে না।
+
+==================================================
+1. TARGET UNIT IDENTIFICATION
+==================================================
+
+প্রথমে দেখান:
+
+Chapter / Section:
+Type:
+Core Topic:
+Connected Core Topics:
+Structural Job:
+Chapter / Section Purpose:
+Deliverable:
+Intended Reader Understanding:
+
+এই তথ্য Step 10 এবং আগের finalized outputs থেকে গ্রহণ করুন।
+
+==================================================
+2. READER STARTING POINT
+==================================================
+
+এই Chapter / Section শুরু করার সময় পাঠকের:
+
+- কী জানা থাকার কথা
+- কী জানা নাও থাকতে পারে
+- কোন ধারণা ইতিমধ্যে তৈরি হয়েছে
+- কোন misconception থাকতে পারে
+- কোন প্রশ্ন স্বাভাবিকভাবে তৈরি হতে পারে
+
+সংক্ষেপে নির্ধারণ করুন।
+
+নতুন assumption তৈরি করবেন না।
+
+==================================================
+3. WRITING FLOW MAP
+==================================================
+
+এবার Chapter / Section-এর জন্য একটি sequential
+Writing Flow Map তৈরি করুন।
+
+প্রতিটি Writing Unit-এর জন্য:
+
+| ক্রম | Writing Element | কী নিয়ে লিখতে হবে | কেন এই Element প্রয়োজন | পাঠকের কোন Understanding তৈরি হবে | আগের Unit-এর সঙ্গে সম্পর্ক |
+|---|---|---|---|---|---|
+
+Writing Element-এর উদাহরণ:
+
+- Hook
+- Opening Question
+- Situation
+- Story
+- Observation
+- Context
+- Definition
+- Concept Introduction
+- Description
+- Explanation
+- Distinction
+- Example
+- Analogy
+- Counter-example
+- Demonstration
+- Authorial Proposition
+- Argument
+- Clarification
+- Interpretation
+- Implication
+- Reflection
+- Practical Illustration
+- Technique Introduction
+- Step-by-step Explanation
+- Transition Statement
+- Mini Conclusion
+- Bridge to Next Idea
+
+কিন্তু প্রয়োজন না হলে কোনো element ব্যবহার করবেন না।
+
+==================================================
+4. ELEMENT SELECTION RULE
+==================================================
+
+প্রতিটি element content-এর প্রয়োজন অনুযায়ী নির্বাচন করুন।
+
+শুধু “ভালো writing”-এর জন্য:
+
+- Hook
+- Story
+- Example
+- Analogy
+- Question
+
+ইত্যাদি জোর করে যোগ করবেন না।
+
+যদি কোনো section সরাসরি conceptual explanation দিয়ে শুরু হওয়াই
+সবচেয়ে স্বাভাবিক হয়, তাহলে সেটিই রাখুন।
+
+যদি story প্রয়োজন না হয়, story দেবেন না।
+
+যদি definition প্রয়োজন না হয়, definition দেবেন না।
+
+যদি hook artificial হয়, hook দেবেন না।
+
+মূল নীতি:
+
+“Writing element serves understanding.”
+
+==================================================
+5. AUTHORIAL CONTENT PLACEMENT
+==================================================
+
+এই Chapter / Section-এ Author-এর substantive content কোথায়
+প্রকাশ পাবে তা স্পষ্টভাবে map করুন।
+
+বিশেষভাবে:
+
+- Authorial Proposition
+- Authorial Explanation
+- Interpretation
+- Argument
+- Metaphysical Claim
+- Conceptual Distinction
+- Practical Technique
+- Example / Analogy
+- Authorial Conclusion
+
+প্রতিটি ক্ষেত্রে বলুন:
+
+- কোথায় এটি আসবে
+- তার আগে কী understanding প্রয়োজন
+- কেন এই জায়গায় এটি আসা উচিত
+
+Authorial Content-কে writing element-এর আড়ালে হারিয়ে ফেলবেন না।
+
+==================================================
+6. SOURCE CONTENT PLACEMENT
+==================================================
+
+যেখানে Source Content ব্যবহৃত হবে, তা চিহ্নিত করুন।
+
+যেমন:
+
+- Source concept
+- Source explanation
+- Source practice
+- Source example
+- Source supporting material
+
+Source Content-এর role পরিষ্কার রাখুন।
+
+==================================================
+7. CONCEPT INTRODUCTION MAP
+==================================================
+
+এই Chapter / Section-এ যদি নতুন বা unfamiliar concept থাকে,
+প্রতিটির জন্য দেখান:
+
+Concept:
+কোথায় introduce হবে:
+কী context আগে প্রয়োজন:
+কীভাবে introduce করা যেতে পারে:
+কেন এখানে introduce করা হচ্ছে:
+এর পরে কোন understanding তৈরি হবে:
+
+Concept-এর full explanation প্রয়োজন হলে তা লিখবেন না;
+শুধু explanation-এর প্রয়োজনীয়তা ও direction দেখান।
+
+==================================================
+8. FLOW & TRANSITION MAP
+==================================================
+
+যেখানে একটি idea থেকে অন্য idea-তে movement আছে,
+সেখানে transition-এর প্রয়োজন নির্ধারণ করুন।
+
+প্রতিটি transition-এর জন্য:
+
+From:
+To:
+কেন transition প্রয়োজন:
+কোন logical / conceptual relationship পাঠককে বোঝাতে হবে:
+
+Transition sentence নিজে থেকে পূর্ণাঙ্গভাবে লিখবেন না।
+
+শুধু transition-এর function ও direction দিন।
+
+==================================================
+9. READER UNDERSTANDING LADDER
+==================================================
+
+Chapter / Section-এর শেষে একটি Understanding Ladder তৈরি করুন।
+
+Format:
+
+1. প্রথমে পাঠক বুঝবেন —
+2. তারপর পাঠক বুঝবেন —
+3. এরপর পাঠক বুঝবেন —
+4. তারপর পাঠক বুঝতে পারবেন —
+5. শেষে পাঠক উপলব্ধি / প্রয়োগ করতে পারবেন —
+
+এই sequence অবশ্যই existing content এবং Deliverable-এর
+ভিত্তিতে তৈরি হবে।
+
+নতুন learning outcome invent করবেন না।
+
+==================================================
+10. DUMMY TEMPLATE
+==================================================
+
+এবার উপরের analysis-এর ভিত্তিতে একটি compact Dummy Template দিন।
+
+উদাহরণস্বরূপ:
+
+[OPENING / CONTEXT]
+→ [CONCEPT INTRODUCTION]
+→ [EXPLANATION]
+→ [AUTHORIAL PROPOSITION]
+→ [CLARIFICATION]
+→ [EXAMPLE / ANALOGY — যদি প্রয়োজন হয়]
+→ [DEVELOPMENT]
+→ [IMPLICATION]
+→ [TRANSITION]
+→ [NEXT IDEA]
+
+প্রতিটি placeholder-এর পাশে এক লাইনে লিখুন:
+
+- কী লিখতে হবে
+- কেন লিখতে হবে
+- পাঠক কী বুঝবেন
+
+এটি কখনও পূর্ণ prose হবে না।
+
+==================================================
+11. WHAT NOT TO DO
+==================================================
+
+এই Chapter / Section লেখার সময় লেখককে সম্ভাব্য ভুলগুলোও
+চিহ্নিত করুন।
+
+শুধু content-এর ভিত্তিতে বলুন:
+
+- কোথায় অপ্রয়োজনীয় ভূমিকা না দেওয়াই ভালো
+- কোথায় premature explanation এড়ানো উচিত
+- কোন concept আগে না এলে confusion হতে পারে
+- কোথায় repetition-এর সম্ভাবনা আছে
+- কোথায় অতিরিক্ত example প্রয়োজন নেই
+- কোথায় Authorial Proposition dilute হওয়ার ঝুঁকি আছে
+- কোথায় Source এবং Author-এর বক্তব্য মিশে যাওয়ার ঝুঁকি আছে
+
+কিন্তু নতুন writing rule invent করবেন না।
+
+==================================================
+12. WRITER'S QUICK CARD
+==================================================
+
+সবশেষে একটি সংক্ষিপ্ত reference card দিন:
+
+### এই অংশটি লিখতে গিয়ে মনে রাখবেন
+
+**মূল প্রশ্ন:**  
+এই Chapter / Section-এর মূল প্রশ্ন কী?
+
+**মূল বক্তব্য:**  
+কোন central idea প্রকাশ পাবে?
+
+**Reader Starting Point:**  
+পাঠক কোথা থেকে শুরু করছেন?
+
+**Reader Ending Point:**  
+শেষে কী বুঝবেন?
+
+**মূল Content:**  
+কোন কোন content অবশ্যই প্রকাশ করতে হবে?
+
+**Writing Flow:**  
+১ → ২ → ৩ → ৪ → ৫
+
+**সবচেয়ে গুরুত্বপূর্ণ Authorial Content:**  
+...
+
+**সবচেয়ে গুরুত্বপূর্ণ Transition:**  
+...
+
+**যা এড়িয়ে চলতে হবে:**  
+...
+
+==================================================
+13. FINAL WRITING BLUEPRINT TABLE
+==================================================
+
+উপরের সমস্ত analysis, Writing Flow Map, Authorial Content
+Placement, Source Content Placement, Concept Introduction Map,
+Flow & Transition Map, Understanding Ladder, Dummy Template এবং
+What Not to Do—এই সবকিছুর essential নির্দেশনাকে একত্র করে
+উত্তরের একেবারে শেষে একটি পূর্ণাঙ্গ কিন্তু ব্যবহারযোগ্য
+FINAL WRITING BLUEPRINT TABLE তৈরি করুন।
+
+এই টেবিলটি Manuscript Drafting-এর সময় লেখকের
+প্রধান Ready Reckoner হিসেবে ব্যবহারযোগ্য হতে হবে।
+
+টেবিলের প্রতিটি Row হবে একটি sequential Writing Unit।
+
+Format:
+
+| ক্রম | কী লিখতে হবে | কীভাবে এগোতে হবে / Writing Element | কেন এটি এখানে | পাঠক কী বুঝবেন | Authorial / Source Content | Transition / Flow নির্দেশনা | কী এড়িয়ে চলতে হবে |
+|---|---|---|---|---|---|---|---|
+
+### এই টেবিল তৈরির নিয়ম:
+
+1. Writing Unit-গুলো natural writing sequence অনুযায়ী সাজাবেন।
+
+2. প্রতিটি Unit-এর content function স্পষ্ট করবেন।
+
+3. কোথায় Hook, Question, Story, Definition, Description,
+   Explanation, Example, Analogy, Proposition, Argument,
+   Clarification, Reflection, Implication, Technique,
+   Transition ইত্যাদি প্রয়োজন তা উল্লেখ করবেন।
+
+4. কোনও element প্রয়োজন না হলে সেটি জোর করে যোগ করবেন না।
+
+5. “কী লিখতে হবে” কলামে full paragraph বা polished prose লিখবেন না।
+
+6. Authorial Content-এর জায়গা স্পষ্ট রাখবেন।
+
+7. Source Content-এর জায়গা স্পষ্ট রাখবেন।
+
+8. প্রতিটি Writing Element-এর সঙ্গে তার purpose এবং
+   intended reader understanding যুক্ত রাখবেন।
+
+9. Transition-এর ক্ষেত্রে পূর্ণ transition sentence লিখবেন না;
+   শুধু কোথা থেকে কোথায় এবং কেন যাওয়ার প্রয়োজন তা নির্দেশ করুন।
+
+10. কোনও নতুন substantive idea যোগ করবেন না।
+
+11. Final Outline, Core Topic, Structural Job বা Deliverable
+    পরিবর্তন করবেন না।
+
+12. Table-টি এমনভাবে তৈরি করুন যাতে লেখক Manuscript Drafting-এর
+    সময় প্রথমে এই Table দেখে পুরো Section-এর writing flow বুঝতে
+    পারেন এবং তারপর নিজের ভাষায় লেখা শুরু করতে পারেন।
+
+13. এই Table manuscript-এর replacement নয়;
+    এটি manuscript লেখার আগে এবং লেখার সময় reference হিসেবে
+    ব্যবহারের জন্য।
+
+==================================================
+FINAL INTEGRITY CHECK
+==================================================
+
+নিজেকে পরীক্ষা করুন:
+
+1. এটি কি সত্যিই শুধু একটি Writing Blueprint?
+2. এটি কি Manuscript লিখে ফেলেনি?
+3. কোনো নতুন substantive idea যোগ হয়েছে কি?
+4. Authorial Content-এর কোনো অংশ হারিয়েছে কি?
+5. Source Content-এর role বদলেছে কি?
+6. Core Topic অপরিবর্তিত আছে কি?
+7. Deliverable অপরিবর্তিত আছে কি?
+8. Final Outline-এর sequence অপরিবর্তিত আছে কি?
+9. কোনো writing element অপ্রয়োজনীয়ভাবে জোর করে ঢোকানো হয়েছে কি?
+10. প্রতিটি suggested element-এর একটি নির্দিষ্ট reader-understanding
+    function আছে কি?
+11. Final Writing Blueprint Table কি উপরের সমস্ত essential
+    guideline-কে যথাযথভাবে ধারণ করছে?
+12. Table দেখে লেখক কি নিজের ভাষায় সম্পূর্ণ Section / Chapter
+    লেখার flow পরিষ্কারভাবে বুঝতে পারবেন?
+
+যদি কোনো writing element-এর পরিষ্কার function না থাকে,
+সেটি বাদ দিন।
+
+==================================================
+FINAL RULE
+==================================================
+
+এই ধাপে আপনার কাজ:
+
+“লেখককে লেখার আগে একটি সম্ভাব্য writing architecture দেখানো।”
+
+আপনার কাজ নয়:
+
+“লেখকের হয়ে Chapter / Section লিখে দেওয়া।”
+
+অতএব:
+
+Blueprint → Guide করবে
+Blueprint → Constrain করবে না
+
+Blueprint → Content-এর flow দেখাবে
+Blueprint → Content তৈরি করবে না
+
+Blueprint → Writing Element suggest করবে
+Blueprint → Formula চাপিয়ে দেবে না
+
+Blueprint → Reader Understanding-এর পথ দেখাবে
+Blueprint → Reader-এর জন্য conclusion invent করবেন না
+
+মূল নীতি:
+
+“Content determines the writing architecture;
+writing architecture does not determine the content.”</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 12 -->
+        <div class="prompt-card" id="p12">
+            <div class="prompt-header">
+                <div class="prompt-number">12</div>
+                <h2 class="prompt-title">5-Lens Manuscript Review</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>নীচে দেওয়া Manuscript / Chapter / Section-কে পাঁচটি নির্দিষ্ট
+Review Lens দিয়ে পরীক্ষা করুন।
+
+এই ধাপে আপনার কাজ হলো:
+
+1. প্রকৃত সমস্যা বা উন্নতির সুযোগ শনাক্ত করা
+2. সমস্যাটির প্রকৃতি নির্ধারণ করা
+3. সমস্যাটি কেন গুরুত্বপূর্ণ তা বোঝানো
+4. প্রয়োজন হলে কী ধরনের পরিবর্তন দরকার তা recommend করা
+
+প্রতিটি লেন্সে শুধু সমস্যা খোঁজার জন্য সমস্যা খুঁজবেন না।
+যেখানে সত্যিই উন্নতির সুযোগ আছে, শুধুমাত্র সেগুলো চিহ্নিত করুন।
+
+একই সমস্যা একাধিক Lens-এ প্রযোজ্য হলে অযথা পুনরাবৃত্তি করবেন না।
+সবচেয়ে প্রাসঙ্গিক Lens-এ রাখুন।
+
+==================================================
+GOVERNING PRINCIPLE
+==================================================
+
+এই review-এর মৌলিক নীতি:
+
+“Structure is in service of the content, not content in service
+of the structure.”
+
+Manuscript-এর মধ্যে থাকা:
+
+- Authorial propositions
+- Arguments
+- Explanations
+- Interpretations
+- Metaphysical claims
+- Conceptual distinctions
+- Examples
+- Analogies
+- Conclusions
+- Practical techniques
+
+—এসবকে substantive content হিসেবে বিবেচনা করুন।
+
+শুধুমাত্র:
+
+- flow
+- brevity
+- neatness
+- symmetry
+- reader convenience
+- structural compactness
+
+এর জন্য substantive authorial content বাদ, replace, dilute বা
+অপ্রয়োজনীয়ভাবে shorten করার recommendation দেবেন না।
+
+যদি substantive content-এর কারণে কোনো structural সমস্যা তৈরি হয়,
+প্রথমে দেখুন:
+
+“Structure কীভাবে পরিবর্তিত হলে এই content-টিকে আরও ভালোভাবে
+serve করা যায়?”
+
+==================================================
+FINAL STRUCTURE & DELIVERABLE BASELINE
+==================================================
+
+এই Manuscript যদি Step 9-এর Final Outline এবং Step 11-এর
+Writing Blueprint অনুসরণ করে লেখা হয়ে থাকে, তাহলে সেগুলিকে
+review-এর structural baseline হিসেবে ব্যবহার করুন।
+
+বিশেষভাবে পরীক্ষা করুন:
+
+- Chapter / Section-এর Core Topic
+- Purpose
+- Structural Job
+- Deliverable
+- Intended Reader Understanding
+- Authorial Content
+- Conceptual Dependency
+- Intended Writing Flow
+
+Review-এর কারণে এগুলিকে নিজের পছন্দ অনুযায়ী পরিবর্তন করবেন না।
+
+কোনও সমস্যা থাকলে প্রথমে নির্ধারণ করুন সেটি:
+
+Content Problem
+নাকি
+Structure / Placement / Sequence Problem
+
+==================================================
+DELIVERABLE PROTECTION
+==================================================
+
+একটি Chapter বা Section-এর Deliverable হলো review-এর একটি
+protected reference point।
+
+“Deliverable পূরণ হচ্ছে না”
+এবং
+“Deliverable পরিবর্তন করা দরকার”
+
+—এই দুটোকে এক জিনিস হিসেবে বিবেচনা করবেন না।
+
+যদি Deliverable পূরণ না হওয়ার কারণ:
+
+- insufficient explanation
+- missing context
+- poor sequencing
+- weak transition
+- inadequate development
+- unclear expression
+- misplaced content
+
+হয়, তাহলে সেই সমস্যাটিই identify করুন।
+
+শুধু সেই কারণে Deliverable পরিবর্তনের recommendation দেবেন না।
+
+==================================================
+CONTENT PROBLEM বনাম STRUCTURAL PROBLEM
+==================================================
+
+### Content Problem
+
+যখন সমস্যাটি manuscript-এর:
+
+- বক্তব্য
+- explanation
+- argument
+- clarity
+- depth
+- precision
+- usefulness
+- presentation
+
+এর মধ্যে রয়েছে।
+
+মূল প্রশ্ন:
+
+“Content-এর কোন দিকটি উন্নত করা দরকার?”
+
+### Structural Problem
+
+যখন content গুরুত্বপূর্ণ ও যথাযথ, কিন্তু:
+
+- position
+- sequence
+- grouping
+- introduction
+- context
+- transition
+- surrounding explanation
+
+ঠিক নেই।
+
+মূল প্রশ্ন:
+
+“এই content-কে আরও ভালোভাবে serve করার জন্য structure বা
+placement-এ কী পরিবর্তন দরকার?”
+
+Structural solution সম্ভব হলে content কাটছাঁটের আগে structural
+solution-কে অগ্রাধিকার দিন।
+
+==================================================
+LENS 1 — SEASONED WRITING EDITOR
+==================================================
+
+একজন অভিজ্ঞ ও কঠোর বাংলা বই-সম্পাদকের দৃষ্টিতে manuscript পড়ুন।
+
+চিহ্নিত করুন:
+
+- vague language
+- generic wording
+- cliché
+- unnecessary repetition
+- wordiness
+- imprecision
+- awkward expression
+- weak sentence construction
+- unnecessarily formal বা artificial language
+- যেখানে কম কথায় একই গুরুত্বপূর্ণ বক্তব্য আরও শক্তিশালী করা যায়
+
+কিন্তু:
+
+কোনও substantive idea-কে শুধু concise করার জন্য বাদ দেওয়ার
+recommendation দেবেন না।
+
+মূল প্রশ্ন:
+
+“লেখাটি কোথায় আরও precise, শক্তিশালী ও স্বাভাবিক হতে পারে?”
+
+==================================================
+LENS 2 — FIRST-TIME READER
+==================================================
+
+এমন একজন পাঠক হিসেবে পড়ুন যিনি বিষয়টি প্রথমবার পড়ছেন।
+
+চিহ্নিত করুন:
+
+- কোথায় confusion তৈরি হচ্ছে
+- কোথায় sentence পুনরায় পড়তে হচ্ছে
+- কোথায় context অপর্যাপ্ত
+- কোথায় unfamiliar concept হঠাৎ এসেছে
+- কোথায় explanation-এর প্রয়োজন
+- কোথায় ভাষা unnatural বা overly writerly
+- কোথায় interest ধরে রাখা কঠিন
+- কোথায় reader-এর আগের understanding যথেষ্ট নয়
+
+মূল প্রশ্ন:
+
+“নতুন পাঠক কোথায় বুঝতে, অনুসরণ করতে বা আগ্রহ ধরে রাখতে গিয়ে
+আটকে যাবেন?”
+
+যদি সমস্যাটি content-এর অভাব নয় বরং sequence / placement-এর
+কারণে হয়, Structural Problem হিসেবে চিহ্নিত করুন।
+
+==================================================
+LENS 3 — KNOWLEDGEABLE READER
+==================================================
+
+এমন একজন পাঠক হিসেবে পড়ুন যিনি বিষয়টি আগে থেকেই জানেন।
+
+চিহ্নিত করুন:
+
+- কোথায় explanation অতিরিক্ত basic
+- কোথায় বক্তব্য obvious
+- কোথায় predictable
+- কোথায় যথেষ্ট intellectual value তৈরি হচ্ছে না
+- কোথায় sharper distinction প্রয়োজন
+- কোথায় deeper explanation বা useful perspective-এর সুযোগ আছে
+
+কিন্তু কোনো অংশ basic মনে হলেই বাদ দেওয়ার recommendation দেবেন না।
+
+পরীক্ষা করুন:
+
+“এটি কি নতুন পাঠকের foundation হিসেবে প্রয়োজনীয়?”
+
+মূল প্রশ্ন:
+
+“বিষয়টি জানা পাঠকের জন্য কোথায় manuscript কম গভীর বা কম
+valuable মনে হতে পারে?”
+
+==================================================
+LENS 4 — “SO WHAT?”
+==================================================
+
+একজন পাঠক হিসেবে প্রশ্ন করুন:
+
+“So what?
+Why should I care about this?”
+
+চিহ্নিত করুন:
+
+- information আছে কিন্তু insight দুর্বল
+- claim আছে কিন্তু implication স্পষ্ট নয়
+- explanation আছে কিন্তু reader value অস্পষ্ট
+- meaningful takeaway অনুপস্থিত
+- practical meaning প্রয়োজন অথচ অনুপস্থিত
+
+কিন্তু কোনো concept-এর immediate practical usefulness না থাকলেই
+তাকে unnecessary বলবেন না।
+
+পরীক্ষা করুন সেটি কি:
+
+- foundational
+- prerequisite
+- later argument-এর ভিত্তি
+- conceptual clarification
+
+হিসেবে প্রয়োজনীয়।
+
+মূল প্রশ্ন:
+
+“এই অংশটি পড়ার পরে পাঠক কী meaningful value পেলেন?”
+
+==================================================
+LENS 5 — READER JOURNEY
+==================================================
+
+পুরো manuscript-কে শুরু থেকে শেষ পর্যন্ত একটি continuous
+reading experience হিসেবে বিচার করুন।
+
+চিহ্নিত করুন:
+
+- weak opening
+- unnecessary detour
+- circular movement
+- repetition
+- abrupt transition
+- premature concept
+- insufficient preparation
+- important idea appearing too late
+- weak development
+- sudden conclusion
+- disconnected ending
+- next idea-তে যাওয়ার natural reason-এর অভাব
+
+বিশেষভাবে distinguish করুন:
+
+“এই content-এর প্রয়োজন নেই”
+
+এবং
+
+“এই content-এর প্রয়োজন আছে, কিন্তু এই জায়গায় / এই ক্রমে নেই।”
+
+দ্বিতীয় ক্ষেত্রে content বাদ দেওয়ার বদলে structural solution
+খুঁজুন।
+
+আরও একটি comparison করুন:
+
+### Intended Reader Journey
+Step 9 / Step 11 অনুযায়ী যে conceptual journey তৈরি হওয়ার কথা।
+
+vs.
+
+### Actual Reader Journey
+Manuscript পড়ে বাস্তবে যে journey তৈরি হচ্ছে।
+
+দুটির মধ্যে gap থাকলে সেটি চিহ্নিত করুন।
+
+==================================================
+OBSERVATION FORMAT
+==================================================
+
+প্রতিটি গুরুত্বপূর্ণ observation-এর ক্ষেত্রে বলুন:
+
+**Priority:** P1 / P2 / P3
+
+**Lens:**  
+কোন Lens-এ সবচেয়ে প্রাসঙ্গিক।
+
+**সমস্যার ধরন:**  
+Content Problem / Structural Problem
+
+**কোথায়:**  
+Manuscript-এর নির্দিষ্ট অংশ।
+
+**সমস্যা:**  
+কী সমস্যা।
+
+**কেন গুরুত্বপূর্ণ:**  
+Reader experience বা content quality-তে এর প্রভাব।
+
+**Recommendation:**  
+কী পরিবর্তন দরকার।
+
+Structural Problem হলে বিশেষভাবে বলুন:
+
+**Structure কীভাবে content-টিকে আরও ভালোভাবে serve করতে পারে।**
+
+Content Problem হলে বলুন:
+
+**Content-এর কোন দিকটি উন্নত করা দরকার।**
+
+==================================================
+PRIORITY
+==================================================
+
+### P1 — MUST FIX
+
+যে সমস্যা ঠিক না করলে:
+
+- clarity
+- conceptual understanding
+- usefulness
+- depth
+- reader experience
+
+উল্লেখযোগ্যভাবে ক্ষতিগ্রস্ত হয়।
+
+### P2 — SHOULD FIX
+
+যে সমস্যা manuscript-কে noticeably দুর্বল করছে,
+কিন্তু মূল বক্তব্যকে নষ্ট করছে না।
+
+### P3 — NICE TO FIX
+
+Minor:
+
+- wording
+- rhythm
+- polish
+- ছোট repetition
+- stylistic refinement
+
+==================================================
+REVIEW DISCIPLINE
+==================================================
+
+1. শুধু সমস্যা খোঁজার জন্য সমস্যা খুঁজবেন না।
+
+2. একই সমস্যা একাধিক Lens-এ repeat করবেন না।
+
+3. Minor wording-এর তুলনায় substantive ও reader-impacting
+   issue-কে priority দিন।
+
+4. Authorial Content-কে structure-এর subordinate করবেন না।
+
+5. Important content-এর value না বুঝে “unnecessary” বলবেন না।
+
+6. Repetition-এর মধ্যে নতুন function আছে কি না পরীক্ষা করুন।
+
+7. Detour-এর মধ্যে substantive purpose আছে কি না পরীক্ষা করুন।
+
+8. Basic explanation foundation হিসেবে প্রয়োজন কি না পরীক্ষা করুন।
+
+9. Difficult concept সরানোর আগে better introduction,
+   sequencing বা explanation-এর সম্ভাবনা পরীক্ষা করুন।
+
+10. Structural problem-এর জন্য content sacrifice করবেন না।
+
+11. Reviewer নিজের intellectual direction manuscript-এর উপর
+    চাপিয়ে দেবেন না।
+
+12. Full manuscript rewrite করবেন না।
+
+13. নতুন substantive content invent করবেন না।
+
+==================================================
+FINAL DIAGNOSTIC SUMMARY
+==================================================
+
+সবশেষে সংক্ষিপ্তভাবে দিন:
+
+### P1 — Must Fix
+...
+
+### P2 — Should Fix
+...
+
+### P3 — Nice to Fix
+...
+
+### Content Problems
+...
+
+### Structural Problems
+...
+
+### Authorial Content at Risk
+...
+
+### Reader Journey Issues
+...
+
+### Overall Diagnosis
+Manuscript-এর সবচেয়ে গুরুত্বপূর্ণ কয়েকটি improvement area
+কী এবং কেন।
+
+==================================================
+SUMMARY TABLE
+==================================================
+
+উত্তরের শেষে এই table দিন:
+
+| Lens | কী identify করেছে | Problem Type | Priority | কেন গুরুত্বপূর্ণ | Recommended Direction |
+|---|---|---|---|---|---|
+
+এই ধাপে শুধু প্রকৃত ও meaningful observations রাখুন।
+
+==================================================
+FINAL RULE
+==================================================
+
+এই Prompt-এর কাজ:
+
+DETECT
+→ DIAGNOSE
+→ PRIORITIZE
+→ RECOMMEND
+
+এই Prompt-এর কাজ নয়:
+
+REWRITE
+→ NEW CONTENT CREATE
+→ NEW STRUCTURE IMPOSE
+→ DELIVERABLE CHANGE
+→ AUTHORIAL DIRECTION CHANGE</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 13 -->
+        <div class="prompt-card" id="p13">
+            <div class="prompt-header">
+                <div class="prompt-number">13</div>
+                <h2 class="prompt-title">Editing Reference Map</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Prompt 12-এর 5-Lens Review-এর সম্পূর্ণ output and
+সংশ্লিষ্ট Manuscript ব্যবহার করুন।
+
+এই ধাপে আপনার কাজ হলো Prompt 12-এ identified এবং
+editing-এর জন্য recommended সমস্ত point-কে strictly follow করে
+একটি:
+
+# MANUSCRIPT EDITING REFERENCE MAP
+
+তৈরি করা।
+
+==================================================
+CORE PRINCIPLE
+==================================================
+
+Prompt 13 নিজে থেকে নতুন সমস্যা খুঁজবে না।
+
+Prompt 12-এ যা:
+
+- Identified হয়েছে
+- Diagnosed হয়েছে
+- Recommended হয়েছে
+
+শুধুমাত্র সেগুলোকেই editing action-এ রূপান্তর করবে।
+
+অর্থাৎ:
+
+Prompt 12 = WHAT NEEDS ATTENTION + WHY + WHAT DIRECTION
+
+Prompt 13 = WHAT THE WRITER NEEDS TO DO
+
+==================================================
+NO NEW EDITORIAL AGENDA
+==================================================
+
+Prompt 12-এর বাইরে থেকে:
+
+- নতুন সমস্যা
+- নতুন criticism
+- নতুন recommendation
+- নতুন structural change
+- নতুন content
+- নতুন argument
+
+যোগ করা যাবে না।
+
+যদি Prompt 12-এর কোনো recommendation অস্পষ্ট হয়,
+সেটিকে নিজের মতো expand করবেন না।
+
+শুধু ambiguity হিসেবে Flag করুন।
+
+==================================================
+CONTENT & DELIVERABLE LOCK
+==================================================
+
+Editing Reference Map তৈরি করার সময়:
+
+- Chapter Deliverable পরিবর্তন করা যাবে না
+- Section Deliverable পরিবর্তন করা যাবে না
+- Core Topic পরিবর্তন করা যাবে না
+- Authorial Proposition-এর অর্থ পরিবর্তন করা যাবে না
+- Authorial Intellectual Direction পরিবর্তন করা যাবে না
+- substantive Authorial Content বাদ দেওয়া যাবে না
+
+Prompt 12 যদি structural improvement recommend করে,
+তার উদ্দেশ্য হবে content-কে আরও ভালোভাবে serve করা।
+
+==================================================
+1. EDITING ACTION MAP
+==================================================
+
+Prompt 12-এর প্রতিটি actionable recommendation-কে
+একটি editing action-এ রূপান্তর করুন।
+
+Format:
+
+| ক্রম | কোথায় | Prompt 12-এর সমস্যা | কী করতে হবে | কীভাবে করতে হবে | কেন করতে হবে | কী অক্ষুণ্ণ রাখতে হবে |
+|---|---|---|---|---|---|---|
+
+“কীভাবে করতে হবে” অংশে full rewrite দেবেন না।
+
+শুধু editing direction দিন।
+
+==================================================
+2. EDITING ACTION TYPE
+==================================================
+
+প্রতিটি action প্রয়োজন অনুযায়ী classify করুন:
+
+- Clarify
+- Tighten
+- Expand
+- Reorder
+- Relocate
+- Introduce Context
+- Strengthen Transition
+- Reduce Repetition
+- Deepen Explanation
+- Sharpen Distinction
+- Add Implication
+- Improve Opening
+- Improve Ending
+- Improve Reader Orientation
+- Language Refinement
+- Remove Redundancy
+- Protect / Preserve Authorial Content
+
+প্রয়োজন না হলে কোনো action type ব্যবহার করবেন না।
+
+==================================================
+3. SEQUENCE OF EDITING
+==================================================
+
+Editing-এর কাজগুলো এমন ক্রমে সাজান যাতে লেখক
+সবচেয়ে কার্যকরভাবে manuscript edit করতে পারেন।
+
+সাধারণভাবে:
+
+P1 Structural / Conceptual
+→ P1 Content
+→ P2 Structural / Content
+→ P3 Language / Polish
+
+কিন্তু Prompt 12-এর actual recommendation যদি অন্য sequence দাবি করে,
+সেটিই অনুসরণ করুন।
+
+==================================================
+4. SECTION-BY-SECTION EDITING MAP
+==================================================
+
+প্রতিটি Chapter / Section-এর জন্য দেখান:
+
+### [Chapter / Section Name]
+
+**Keep:**  
+যা অক্ষুণ্ণ রাখতে হবে।
+
+**Change:**  
+যা পরিবর্তন করতে হবে।
+
+**Add / Expand:**  
+যদি Prompt 12 recommend করে।
+
+**Move / Reorder:**  
+যদি Prompt 12 recommend করে।
+
+**Tighten / Reduce:**  
+যদি Prompt 12 recommend করে।
+
+**Clarify:**  
+যদি প্রয়োজন হয়।
+
+**Transition:**  
+যদি প্রয়োজন হয়।
+
+**Reader Understanding to Protect:**  
+এই editing-এর পরে কোন understanding অক্ষুণ্ণ থাকতে হবে।
+
+**Deliverable to Protect:**  
+Chapter / Section-এর কোন deliverable অক্ষুণ্ণ থাকতে হবে।
+
+==================================================
+5. AUTHORIAL CONTENT PROTECTION MAP
+==================================================
+
+Prompt 12-এ identified Authorial Content-এর ক্ষেত্রে
+বিশেষভাবে দেখান:
+
+- কী preserve করতে হবে
+- কোথায় clarity বাড়াতে হবে
+- কোথায় explanation strengthen করতে হবে
+- কোথায় structure পরিবর্তন করে content-কে space দিতে হবে
+
+Authorial Content-এর substance পরিবর্তনের recommendation দেবেন না,
+যদি Prompt 12 তা explicitly না বলে।
+
+==================================================
+6. READER JOURNEY EDITING MAP
+==================================================
+
+Prompt 12-এর Reader Journey observations-কে
+editing action-এ রূপান্তর করুন।
+
+যেমন:
+
+- Opening strengthen
+- Context আগে আনা
+- Concept introduction প্রস্তুত করা
+- Transition improve
+- Repetition reorganize
+- Important idea-এর preparation তৈরি
+- Ending strengthen
+
+প্রতিটি action-এর সঙ্গে লিখুন:
+
+“এটি করলে পাঠকের কোন movement বা understanding উন্নত হবে?”
+
+==================================================
+7. FINAL EDITING SEQUENCE
+==================================================
+
+এরপর সম্পূর্ণ manuscript edit করার জন্য
+একটি practical sequence দিন:
+
+1.
+2.
+3.
+4.
+5.
+...
+
+এই sequence Prompt 12-এর recommendations-এর বাইরে যাবে না।
+
+==================================================
+8. FINAL MANUSCRIPT EDITING REFERENCE TABLE
+==================================================
+
+উত্তরের একেবারে শেষে সমস্ত actionable editing guidance-কে
+একটি consolidated table-এ একত্র করুন।
+
+এই table-টি Manuscript editing-এর সময় লেখকের
+প্রধান Ready Reckoner হিসেবে ব্যবহারযোগ্য হবে।
+
+Format:
+
+| ক্রম | Chapter / Section | কোথায় | কী সমস্যা | কী Edit করতে হবে | Edit-এর ধরন | কেন করতে হবে | কী অক্ষুণ্ণ রাখতে হবে | Status |
+|---|---|---|---|---|---|---|---|---|
+
+### Status
+
+লেখক editing-এর সময় status ব্যবহার করতে পারবেন:
+
+- ☐ Not Started
+- ☐ In Progress
+- ✓ Done
+
+==================================================
+9. EDITING INTEGRITY CHECK
+==================================================
+
+শেষে পরীক্ষা করুন:
+
+1. Prompt 12-এর সব actionable recommendation কি অন্তর্ভুক্ত?
+2. কোনো recommendation বাদ গেছে কি?
+3. Prompt 12-এর বাইরে নতুন recommendation ঢুকেছে কি?
+4. কোনো Chapter / Section Deliverable বদলেছে কি?
+5. Core Topic বদলেছে কি?
+6. Authorial Content-এর substance বদলেছে কি?
+7. Structural recommendation কি content-serving?
+8. Editing sequence কি logical?
+9. Writer কি table দেখে সরাসরি editing শুরু করতে পারবেন?
+
+==================================================
+ABSOLUTE FINAL RULE
+==================================================
+
+Prompt 13-এর কাজ:
+
+Prompt 12-এর diagnosis-কে
+একটি ব্যবহারযোগ্য Editing Reference Map-এ রূপান্তর করা।
+
+Prompt 13-এর কাজ নয়:
+
+নতুন করে manuscript review করা।
+নতুন সমস্যা খোঁজা।
+নতুন editorial opinion দেওয়া।
+নতুন content তৈরি করা।
+Author-এর intellectual direction পরিবর্তন করা।
+
+মূল নীতি:
+
+“First diagnose the manuscript.
+Then edit according to the diagnosis.”
+
+Prompt 12 decides:
+WHAT NEEDS TO CHANGE
+
+Prompt 13 organizes:
+HOW THE WRITER SHOULD EXECUTE THOSE CHANGES</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        function copyPrompt(button) {
+            const textarea = button.previousElementSibling;
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                const originalText = button.innerHTML;
+                button.innerHTML = '&#10003; Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+        }
+    </script>
+
+</body>
+</html>

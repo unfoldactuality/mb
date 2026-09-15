@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUTHOR'S CONTENT MAP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,700;0,900;1,700;1,900&family=Newsreader:ital,wght@0,400;0,600;1,400&family=Manrope:wght@500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ffba38;
+            --primary-fixed: #ffdeac;
+            --on-primary: #432c00;
+            --surface: #16111f;
+            --surface-dim: #16111f;
+            --surface-container-lowest: #110b1a;
+            --surface-container-low: #1f1928;
+            --surface-container: #231d2c;
+            --surface-container-high: #2e2737;
+            --surface-container-highest: #393242;
+            --on-surface: #eadef4;
+            --on-surface-variant: #ccc4cf;
+            --outline: #958e99;
+            --outline-variant: #4a454e;
+            --tertiary: #b9ccb1;
+            --green: #00c853;
+            --font-headline: 'Noto Serif', serif;
+            --font-body: 'Newsreader', serif;
+            --font-label: 'Manrope', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-label);
+            color: var(--on-surface);
+            background: var(--surface);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* STARFIELD ANIMATION */
+        .stars, .stars-md {
+            position: absolute;
+            top: 0; left: 0;
+            border-radius: 50%;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .stars {
+            width: 1px; height: 1px;
+            box-shadow: 1425px 308px #fff, 187px 125px #fff, 913px 467px #fff, 1680px 82px #fff, 432px 391px #fff, 1102px 37px #fff, 761px 242px #fff;
+            animation: drift 150s linear infinite;
+        }
+
+        .stars-md {
+            width: 2px; height: 2px;
+            box-shadow: 1312px 178px #fff, 456px 445px #fff, 1789px 112px #fff, 623px 323px #fff;
+            animation: drift 100s linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-600px); }
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 80px 0 60px;
+            background: var(--surface-container-lowest);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header__title {
+            font-family: var(--font-headline);
+            font-size: clamp(1rem, 8vw, 2.5rem);
+            font-weight: 500;
+            font-style: bold;
+            color: var(--primary);
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        .header__subtitle {
+            font-family: var(--font-headline);
+            font-size: clamp(1rem, 5vw, 1.5rem);
+            color: var(--on-surface-variant);
+            font-style: italic;
+        }
+
+        /* NAVIGATION */
+        .tools-nav {
+            background: var(--surface-container-high);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 20px;
+        }
+        
+        .nav-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .tools-nav h3 {
+            font-family: var(--font-label);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 15px;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            background: var(--surface-container);
+            color: var(--on-surface);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 1px solid var(--outline-variant);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            border-color: var(--primary);
+            background: var(--surface-container-highest);
+        }
+
+        /* INPUT SECTIONS */
+        .input-section {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--outline-variant);
+        }
+
+        .input-card {
+            background: var(--surface-container);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            scroll-margin-top: 30px;
+        }
+
+        .input-label {
+            display: block;
+            font-family: var(--font-headline);
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 12px;
+            color: var(--primary-fixed);
+        }
+
+        .main-textarea {
+            width: 100%;
+            min-height: 100px;
+            background: var(--surface-container-lowest);
+            border: 1px solid var(--outline-variant);
+            border-radius: 12px;
+            color: var(--on-surface);
+            padding: 15px;
+            font-family: var(--font-label);
+            font-size: 1rem;
+            resize: vertical;
+            overflow-y: hidden;
+        }
+
+        .main-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* PROMPT CARDS */
+        .prompt-card {
+            background: var(--surface-container);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            scroll-margin-top: 30px;
+        }
+
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .prompt-number {
+            background: var(--primary);
+            color: var(--on-primary);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .prompt-title {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            min-height: 400px;
+            background: var(--surface-container-lowest);
+            border: 1px solid var(--outline-variant);
+            border-radius: 12px;
+            color: var(--on-surface);
+            padding: 20px;
+            font-family: var(--font-label);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+
+        .copy-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-fixed);
+            transform: scale(1.02);
+        }
+
+        .copy-button.copied {
+            background: var(--green);
+            color: #fff;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid var(--outline-variant);
+            color: var(--on-surface-variant);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header__title { font-size: 2.2rem; }
+            .prompt-card { padding: 20px; }
+            .prompt-textarea { min-height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <div class="stars-md"></div>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="header__title">AUTHOR'S CONTENT MAP</h1>
+            <h2 class="header__subtitle">আমি কী কী বলতে চাই?</h2>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- NAVIGATION -->
+        <nav class="tools-nav">
+            <div class="nav-section">
+                <h3>Jump to Input Fields:</h3>
+                <div class="nav-links">
+                    <a href="#in1">01</a><a href="#in2">02</a><a href="#in3">03</a><a href="#in4">04</a>
+                    <a href="#in5">05</a><a href="#in6">06</a><a href="#in7">07</a><a href="#in8">08</a>
+                    <a href="#in9">09</a><a href="#in10">10</a><a href="#in11">11</a><a href="#in12">12</a>
+                    <a href="#in13">13</a><a href="#in14">14</a><a href="#in15">15</a><a href="#in16">16</a>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <h3>Jump to Prompts:</h3>
+                <div class="nav-links">
+                    <a href="#p1">Prompt 1</a>
+                    <a href="#p2">Prompt 2</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- DYNAMIC INPUT FIELDS -->
+        <section class="input-section">
+            
+            <div class="input-card" id="in1">
+                <label class="input-label">১. আমার Unique Idea:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[যে ধারণাটি আমার নিজের এবং বইতে রাখতে চাই]"></textarea>
+            </div>
+
+            <div class="input-card" id="in2">
+                <label class="input-label">২. আমার নিজের Proposition / বক্তব্য:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[আমি কী মূল দাবি বা বক্তব্য রাখতে চাই]"></textarea>
+            </div>
+
+            <div class="input-card" id="in3">
+                <label class="input-label">৩. আমার নিজের Interpretation:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[কোনও ধারণা, ঘটনা বা বিষয়ের নিজের ব্যাখ্যা / অর্থ]"></textarea>
+            </div>
+
+            <div class="input-card" id="in4">
+                <label class="input-label">৪. আমার নিজের Argument:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[কেন আমি এই বক্তব্যটি গ্রহণ করছি—আমার নিজের reasoning]"></textarea>
+            </div>
+
+            <div class="input-card" id="in5">
+                <label class="input-label">৫. আমার নিজের Observation:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[নিজের দেখা, অভিজ্ঞতা বা পর্যবেক্ষণ]"></textarea>
+            </div>
+
+            <div class="input-card" id="in6">
+                <label class="input-label">৬. আমার নিজের Conceptual Distinction:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[দুটি ধারণা বা বিষয়ের মধ্যে আমি যে গুরুত্বপূর্ণ পার্থক্যটি করতে চাই]"></textarea>
+            </div>
+
+            <div class="input-card" id="in7">
+                <label class="input-label">৭. আমার নিজের Explanation:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[কোনও বিষয়কে আমি নিজের মতো করে কীভাবে ব্যাখ্যা করতে চাই]"></textarea>
+            </div>
+
+            <div class="input-card" id="in8">
+                <label class="input-label">৮. আমার নিজের Terminology:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[নিজের তৈরি terminology অথবা কোনও term-কে নিজের বিশেষ অর্থে ব্যবহার]"></textarea>
+            </div>
+
+            <div class="input-card" id="in9">
+                <label class="input-label">৯. আমার নিজের Example:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[নিজের বক্তব্য বোঝানোর জন্য নিজের উদাহরণ]"></textarea>
+            </div>
+
+            <div class="input-card" id="in10">
+                <label class="input-label">১০. আমার নিজের Analogy:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[নিজের বক্তব্য বোঝানোর জন্য নিজের উপমা / analogy]"></textarea>
+            </div>
+
+            <div class="input-card" id="in11">
+                <label class="input-label">১১. আমার নিজের Story / Narrative:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[বক্তব্য প্রকাশ বা বোঝানোর জন্য ব্যবহার করতে চাই এমন নিজের গল্প / ঘটনা]"></textarea>
+            </div>
+
+            <div class="input-card" id="in12">
+                <label class="input-label">১২. আমার নিজের Practical Method / Technique:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[নিজের প্রস্তাবিত পদ্ধতি, অনুশীলন, exercise বা technique]"></textarea>
+            </div>
+
+            <div class="input-card" id="in13">
+                <label class="input-label">১৩. আমার বক্তব্যের সম্ভাব্য অর্থ / ফলাফল:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[নিজের proposition / idea সত্য বা গ্রহণযোগ্য হলে তার থেকে কী অর্থ, পরিণতি, implication বা নতুন প্রশ্ন দাঁড়ায়]"></textarea>
+            </div>
+
+            <div class="input-card" id="in14">
+                <label class="input-label">১৪. আমার নিজের Conclusion:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[আলোচনা বা বক্তব্য থেকে আমি যে conclusion-এ পৌঁছাতে চাই]"></textarea>
+            </div>
+
+            <div class="input-card" id="in15">
+                <label class="input-label">১৫. Source-এর বক্তব্য নিয়ে নিজের অবস্থান:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[Source যা বলেছে, তার প্রতি আমার অবস্থান—সমর্থন, সংশোধন, সম্প্রসারণ, ব্যাখ্যা, প্রশ্ন, ভিন্নমত বা স্বাধীন অবস্থান]"></textarea>
+            </div>
+
+            <div class="input-card" id="in16">
+                <label class="input-label">১৬. Source-এর বাইরে আমার নতুন সংযোজন:</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="[Source-এ নেই, কিন্তু বইতে নিজের substantive content হিসেবে রাখতে চাই এমন ধারণা, বক্তব্য, explanation, argument, technique ইত্যাদি]"></textarea>
+            </div>
+
+        </section>
+
+        <!-- PROMPTS -->
+        
+        <!-- PROMPT 1 -->
+        <div class="prompt-card" id="p1">
+            <div class="prompt-header">
+                <div class="prompt-number">1</div>
+                <h2 class="prompt-title">Prompt 1</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>AUTHOR'S CONTENT MAP
+“আমি কী কী বলতে চাই?”
+
+১. আমার Unique Idea
+[যে ধারণাটি আমার নিজের এবং বইতে রাখতে চাই]
+
+২. আমার নিজের Proposition / বক্তব্য
+[আমি কী মূল দাবি বা বক্তব্য রাখতে চাই]
+
+৩. আমার নিজের Interpretation
+[কোনও ধারণা, ঘটনা বা বিষয়ের নিজের ব্যাখ্যা / অর্থ]
+
+৪. আমার নিজের Argument
+[কেন আমি এই বক্তব্যটি গ্রহণ করছি—আমার নিজের reasoning]
+
+৫. আমার নিজের Observation
+[নিজের দেখা, অভিজ্ঞতা বা পর্যবেক্ষণ]
+
+৬. আমার নিজের Conceptual Distinction
+[দুটি ধারণা বা বিষয়ের মধ্যে আমি যে গুরুত্বপূর্ণ পার্থক্যটি করতে চাই]
+
+৭. আমার নিজের Explanation
+[কোনও বিষয়কে আমি নিজের মতো করে কীভাবে ব্যাখ্যা করতে চাই]
+
+৮. আমার নিজের Terminology
+[নিজের তৈরি terminology অথবা কোনও term-কে নিজের বিশেষ অর্থে ব্যবহার]
+
+৯. আমার নিজের Example
+[নিজের বক্তব্য বোঝানোর জন্য নিজের উদাহরণ]
+
+১০. আমার নিজের Analogy
+[নিজের বক্তব্য বোঝানোর জন্য নিজের উপমা / analogy]
+
+১১. আমার নিজের Story / Narrative
+[বক্তব্য প্রকাশ বা বোঝানোর জন্য ব্যবহার করতে চাই এমন নিজের গল্প / ঘটনা]
+
+১২. আমার নিজের Practical Method / Technique
+[নিজের প্রস্তাবিত পদ্ধতি, অনুশীলন, exercise বা technique]
+
+১৩. আমার বক্তব্যের সম্ভাব্য অর্থ / ফলাফল
+[নিজের proposition / idea সত্য বা গ্রহণযোগ্য হলে তার থেকে কী অর্থ, পরিণতি, implication বা নতুন প্রশ্ন দাঁড়ায়]
+
+১৪. আমার নিজের Conclusion
+[আলোচনা বা বক্তব্য থেকে আমি যে conclusion-এ পৌঁছাতে চাই]
+
+১৫. Source-এর বক্তব্য নিয়ে নিজের অবস্থান
+[Source যা বলেছে, তার প্রতি আমার অবস্থান—সমর্থন, সংশোধন, সম্প্রসারণ, ব্যাখ্যা, প্রশ্ন, ভিন্নমত বা স্বাধীন অবস্থান]
+
+১৬. Source-এর বাইরে আমার নতুন সংযোজন
+[Source-এ নেই, কিন্তু বইতে নিজের substantive content হিসেবে রাখতে চাই এমন ধারণা, বক্তব্য, explanation, argument, technique ইত্যাদি]</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 2 -->
+        <div class="prompt-card" id="p2">
+            <div class="prompt-header">
+                <div class="prompt-number">2</div>
+                <h2 class="prompt-title">Prompt 2</h2>
+            </div>
+            <textarea class="prompt-textarea" style="min-height: 150px;" readonly>আমি লেখক হিসেবে আমার AUTHOR'S CONTENT MAP-র dumb doc-এ কিছু নোটস-র গ্রুপ হেডডলাইন হিসেবে এ Word / Phrase-টা ব্যবহার করতে চাই - কোন ধরণের নোটসগুলোকে  analogy হিসেবে identify করবো - তার ধারণাটা স্পষ্ট করতে চাই</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Multi-line Dynamic Auto-Resize Logic for Textareas
+        const tx = document.querySelectorAll(".dynamic-textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        }
+
+        // Copy Prompt Logic
+        function copyPrompt(button) {
+            const textarea = button.previousElementSibling;
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                const originalText = button.innerHTML;
+                button.innerHTML = '&#10003; Copied!';
+                button.classList.add('copied');
+                
+                // Deselect Text
+                window.getSelection().removeAllRanges();
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+        }
+    </script>
+
+</body>
+</html>
